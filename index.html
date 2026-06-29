@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wachstumsstrategie EKV // Marktpriorisierung</title>
+<title>Wachstumsstrategie &amp; Auswertung // EKV</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -223,6 +223,22 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
 .navpanel a:hover{background:var(--grey)}
 .navpanel a i{font-family:"JetBrains Mono",monospace;font-style:normal;font-size:11px;color:var(--faint);font-weight:700;width:18px;flex:0 0 auto}
 
+/* ---------- market figures sub-row (collapsible) ---------- */
+.mktbar{display:flex;justify-content:flex-end;margin:0 0 8px}
+.mktbtn{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--hair);padding:6px 13px;font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--ink);cursor:pointer;font-family:"JetBrains Mono",monospace;transition:background .15s}
+.mktbtn:hover{background:var(--grey)}
+.mktbtn .chev{display:inline-block;transition:transform .2s;font-size:9px;color:var(--muted)}
+.mktbtn[aria-expanded=true] .chev{transform:rotate(90deg)}
+.mktrow{display:none}
+.rank.mkt-on .mktrow{display:table-row}
+.mktrow td{padding:0 12px 16px;border:none}
+.mkt{display:flex;flex-wrap:wrap;gap:14px 48px;align-items:flex-end;background:var(--grey);border-left:2px solid var(--ink);padding:13px 18px;margin-top:-6px}
+.mkt-item{display:flex;flex-direction:column;gap:4px}
+.mkt-k{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.mkt-item b{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.mkt-hoch{flex:1 1 280px}
+.rampvals{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--ink);font-weight:600}
+
 /* ---------- mode toggle + raw view ---------- */
 .modetog{display:inline-flex;margin-top:16px;border:1px solid var(--hair);background:#fff}
 .mt{background:#fff;border:none;padding:7px 16px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:background .15s,color .15s}
@@ -246,6 +262,101 @@ body.mode-raw .method>div:first-child,
 body.mode-raw #navpanel a[data-an],
 body.mode-raw #navpanel a i{display:none}
 body.mode-raw .method{grid-template-columns:1fr}
+
+/* ---------- korridor view ---------- */
+#sk{display:none}
+body.mode-korridor main>section:not(#sk){display:none}
+body.mode-korridor #sk{display:block;opacity:1;transform:none;animation:none}
+body.mode-korridor #navwrap{display:none!important}
+.ksub{margin:46px 0 0;padding-top:30px;border-top:1px solid var(--hair)}
+.ksub h3{font-size:23px;font-weight:600;letter-spacing:-.02em;margin:0 0 8px}
+.ksub p{font-size:14px;line-height:1.6;color:var(--muted);max-width:760px;margin:0}
+.kctrls{display:flex;flex-wrap:wrap;align-items:stretch;gap:14px;margin:6px 0 22px}
+.kstep{display:flex;flex-direction:column;gap:9px;border:1px solid var(--hair);background:#fff;padding:14px 18px;min-width:210px;flex:0 0 auto}
+.kstep .klbl{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.kstep .kdot{width:9px;height:9px;display:inline-block}
+.kstep.umsatz{border-color:rgba(47,138,78,.32)} .kstep.umsatz .kdot{background:var(--pos)}
+.kstep.kosten{border-color:rgba(226,0,26,.30)} .kstep.kosten .kdot{background:var(--yellow)}
+.kspin{display:flex;align-items:center;gap:12px}
+.kbtn{width:32px;height:32px;border:1px solid var(--hair);background:#fff;font-size:17px;line-height:1;cursor:pointer;color:var(--ink);display:flex;align-items:center;justify-content:center;padding:0;transition:background .12s}
+.kbtn:hover{background:var(--grey)}
+.kval{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;min-width:54px;text-align:center}
+.kstep.umsatz .kval{color:var(--pos)} .kstep.kosten .kval{color:var(--yellow)}
+.kunit{font-size:14px;color:var(--muted);margin-left:-8px}
+.kreset{align-self:center;border:1px solid var(--hair);background:var(--grey);color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:700;letter-spacing:.05em;padding:0 18px;height:46px;cursor:pointer;transition:background .12s,color .12s}
+.kreset:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.kcard{position:relative;border:1px solid var(--hair);background:#fff;padding:14px 16px 8px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.kcard svg{display:block;width:100%;height:auto}
+.kstat{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--muted);margin:12px 2px 0;line-height:1.6}
+.kstat b{color:var(--ink);font-weight:700} .kstat .pos{color:var(--pos)} .kstat .neg{color:var(--yellow)}
+.kmkt-h{margin:34px 0 14px;font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.kmkt-h span{color:var(--faint);font-weight:400;text-transform:none;letter-spacing:0;margin-left:6px}
+.kmarkets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.kmk{display:flex;align-items:center;gap:12px;border:1px solid var(--hair);background:#fff;padding:11px 14px;cursor:pointer;transition:background .12s,border-color .12s;user-select:none}
+.kmk:hover{background:var(--grey)}
+.kmk.on{border-color:var(--ink)}
+.kmk .box{width:17px;height:17px;border:1.5px solid var(--faint);flex:0 0 auto;position:relative;background:#fff}
+.kmk.on .box{border-color:transparent}
+.kmk.on .box:after{content:"";position:absolute;inset:0;background:var(--mkc)}
+.kmk .knm{font-size:13.5px;font-weight:600;color:var(--ink);flex:1;line-height:1.25}
+.kmk .kpot{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
+.kmk .kpot b{color:var(--pos)}
+.ktip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-size:11.5px;line-height:1.5;padding:9px 12px;min-width:150px;z-index:5;transform:translate(-50%,-115%);font-family:"JetBrains Mono",monospace;box-shadow:0 6px 20px rgba(0,0,0,.22)}
+.ktip .tt-h{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+.ktip .tt-r{display:flex;justify-content:space-between;gap:16px}
+.ktip .tt-r .d{display:inline-flex;align-items:center;gap:6px}
+.ktip .tt-r .sw{width:8px;height:8px;display:inline-block}
+.ktip .tt-tot{border-top:1px solid rgba(255,255,255,.18);margin-top:5px;padding-top:5px}
+
+/* svg shared */
+.k-grid{stroke:var(--hair);stroke-width:1}
+.k-axis{stroke:var(--line2,#D9D9DE);stroke-width:1.4}
+.k-tick{font-family:"JetBrains Mono",monospace;font-size:11px;fill:var(--faint)}
+.k-alab{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;fill:var(--muted);font-weight:700}
+.k-llab{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700}
+.k-now{stroke:var(--ink);stroke-width:1.2;stroke-dasharray:3 3}
+.k-y5{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 4;opacity:.7}
+.k-note{font-family:"JetBrains Mono",monospace;font-size:10px;fill:var(--faint)}
+
+/* scenario sub-tabs */
+.ksubtabs{display:flex;flex-wrap:wrap;gap:0;margin:40px 0 6px;border:1px solid var(--hair);background:#fff;width:fit-content;max-width:100%}
+.kst{appearance:none;border:0;background:#fff;color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;letter-spacing:.04em;padding:11px 18px;cursor:pointer;border-right:1px solid var(--hair);transition:background .12s,color .12s}
+.kst:last-child{border-right:0}
+.kst.on{background:var(--ink);color:#fff}
+.kst:not(.on):hover{background:var(--grey)}
+.kviewtog{display:inline-flex;border:1px solid var(--hair);background:#fff;margin:4px 0 16px}
+.kvt{appearance:none;border:0;background:#fff;color:var(--muted);font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.06em;padding:8px 16px;cursor:pointer;transition:background .12s,color .12s}
+.kvt+.kvt{border-left:1px solid var(--hair)}
+.kvt.on{background:var(--pos);color:#fff}
+.kvt:not(.on):hover{background:var(--grey)}
+
+/* best strategy + AI */
+.kbestrow{display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px;margin:0 0 14px}
+.kbest{appearance:none;border:1px solid var(--ink);background:var(--ink);color:#fff;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;letter-spacing:.04em;padding:11px 18px;cursor:pointer;transition:opacity .12s;white-space:nowrap}
+.kbest:hover{opacity:.85} .kbest:disabled{opacity:.55;cursor:default}
+.kaibox{border:1px solid var(--hair);background:#fff;font-size:12px;max-width:660px;flex:1 1 320px}
+.kaibox summary{cursor:pointer;padding:11px 16px;font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);list-style:none}
+.kaibox summary::-webkit-details-marker{display:none}
+.kaibox summary:before{content:"+ ";color:var(--faint)}
+.kaibox[open] summary:before{content:"\2212 "}
+.kaigrid{display:grid;grid-template-columns:150px 1fr 1fr;gap:10px;padding:0 16px 12px}
+.kaigrid label{display:flex;flex-direction:column;gap:5px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.kaigrid select,.kaigrid input{font-family:"JetBrains Mono",monospace;font-size:12.5px;border:1px solid var(--hair);background:#fff;padding:8px 10px;color:var(--ink);text-transform:none;letter-spacing:0;font-weight:400}
+.kaigrid select:focus,.kaigrid input:focus{outline:none;border-color:var(--ink)}
+.kainote{padding:0 16px 12px;font-size:11px;line-height:1.5;color:var(--faint);margin:0}
+.kbest-note{border-left:3px solid var(--pos);background:var(--grey);padding:12px 16px;font-size:13px;line-height:1.55;color:var(--ink2);margin:0 0 16px}
+.kbest-note b{color:var(--ink)} .kbest-note .kerr{color:var(--yellow);font-size:11px}
+
+/* market row: start-year input + top-5 badge */
+.kmk .krt{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.ktop5{font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;letter-spacing:.05em;color:#fff;background:var(--ink);padding:2px 6px;text-transform:uppercase}
+.kstart{display:inline-flex;align-items:center;gap:5px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.04em;color:var(--muted);font-weight:700;text-transform:uppercase}
+.kstart input{width:42px;font-family:"JetBrains Mono",monospace;font-size:12.5px;text-align:center;border:1px solid var(--hair);background:#fff;padding:5px 4px;color:var(--ink);font-weight:600}
+.kstart input:focus{outline:none;border-color:var(--ink)}
+.k-bub{font-family:Archivo,sans-serif;font-weight:700;fill:#fff;text-anchor:middle}
+.k-bubv{font-family:"JetBrains Mono",monospace;fill:#fff;text-anchor:middle}
+
+@media(max-width:720px){ .kmarkets{grid-template-columns:1fr} .kctrls{gap:10px} .kstep{flex:1 1 100%} .kreset{width:100%} .kaigrid{grid-template-columns:1fr} .ksubtabs{width:100%} .kst{flex:1 1 auto;text-align:center;padding:11px 6px} }
 
 /* ---------- responsive ---------- */
 @media(max-width:860px){
@@ -281,11 +392,12 @@ body.mode-raw .method{grid-template-columns:1fr}
     <div class="brand">
       <div>
         <p class="wordmark">Ernst Klett Verlag</p>
-        <p class="eyebrow">Wachstumsstrategie // Marktpriorisierung</p>
-        <h1>Bewertung der zehn Wachstumsinseln</h1>
+        <p class="eyebrow">Voting-Auswertung &amp; Marktpotenzial</p>
+        <h1>Wachstumsstrategie &amp; Auswertung</h1>
         <div class="modetog" role="group" aria-label="Ansicht">
           <button class="mt on" data-mode="analyse" aria-pressed="true">Analyse</button>
           <button class="mt" data-mode="raw" aria-pressed="false">Roh</button>
+          <button class="mt" data-mode="korridor" aria-pressed="false">Korridor</button>
         </div>
       </div>
     </div>
@@ -430,8 +542,13 @@ body.mode-raw .method{grid-template-columns:1fr}
         <span class="it" style="color:var(--muted)">gruen steht immer rechts</span>
       </div>
     </div>
+    <div class="mktbar">
+      <button class="mktbtn" id="mktToggle" aria-expanded="false" aria-controls="rankbody">
+        <span class="chev">&#9656;</span> Marktzahlen
+      </button>
+    </div>
     <div class="tbl-scroll">
-      <table class="rank">
+      <table class="rank" id="rankTable">
         <thead><tr>
           <th>#</th><th>Insel</th><th class="col-score">Score</th>
           <th>Wachstum</th><th>Wettbewerb</th><th>Naehe zum Kern</th><th>Konsens</th>
@@ -514,6 +631,68 @@ body.mode-raw .method{grid-template-columns:1fr}
       </div>
     </details>
   </section>
+
+  <!-- K WACHSTUMSKORRIDOR -->
+  <section class="fade" id="sk">
+    <div class="sechead"><span class="snum">K</span><div>
+      <h2>Der Wachstumskorridor</h2>
+      <p>Umsatz waechst rund 1,5 Prozent pro Jahr, Kosten rund 3 Prozent. Heute liegt der Umsatz bei 170 Mio, die Kosten bei 145 Mio, der Ergebnispuffer betraegt also 25 Mio. Ohne neues Wachstum ist dieser Puffer in gut zehn Jahren aufgebraucht und das Ergebnis kippt ins Negative.</p>
+    </div></div>
+
+    <div class="kctrls">
+      <div class="kstep umsatz">
+        <span class="kdot"></span>
+        <span class="klbl">Umsatz-Wachstum p.a.</span>
+        <div class="kspin"><button class="kbtn" data-t="u" data-d="-0.1" aria-label="weniger">&#8722;</button><span class="kval" id="kUVal">1,5</span><span class="kunit">&#37;</span><button class="kbtn" data-t="u" data-d="0.1" aria-label="mehr">+</button></div>
+      </div>
+      <button class="kreset" id="kReset">&#8635; Zurueck zur Realitaet</button>
+      <div class="kstep kosten">
+        <span class="kdot"></span>
+        <span class="klbl">Kosten-Wachstum p.a.</span>
+        <div class="kspin"><button class="kbtn" data-t="k" data-d="-0.1" aria-label="weniger">&#8722;</button><span class="kval" id="kKVal">3,0</span><span class="kunit">&#37;</span><button class="kbtn" data-t="k" data-d="0.1" aria-label="mehr">+</button></div>
+      </div>
+    </div>
+
+    <div class="kcard">
+      <svg id="kChart1" viewBox="0 0 920 380" role="img" aria-label="Wachstumskorridor: Umsatz gegen Kosten ueber die Jahre"></svg>
+      <div class="ktip" id="kTip1" hidden></div>
+    </div>
+    <div class="kstat" id="kKipp"></div>
+
+    <div class="ksubtabs" role="group" aria-label="Szenario">
+      <button class="kst on" data-scen="stabil">Stabiles Wachstum</button>
+      <button class="kst" data-scen="gesteigert">Gesteigertes Wachstum</button>
+      <button class="kst" data-scen="moeglich">Moegliches Wachstum</button>
+    </div>
+
+    <div class="ksub"><h3 id="kScenTitle">Zusaetzlicher Wachstumsanteil</h3><p id="kScenDesc"></p></div>
+
+    <div class="kviewtog" role="group" aria-label="Darstellung">
+      <button class="kvt on" data-v="verlauf">Verlauf</button>
+      <button class="kvt" data-v="bubbles">Markt-Bubbles</button>
+    </div>
+
+    <div class="kcard">
+      <svg id="kChart2" viewBox="0 0 920 380" role="img" aria-label="Zusaetzlicher Wachstumsanteil"></svg>
+      <div class="ktip" id="kTip2" hidden></div>
+    </div>
+    <div class="kstat" id="kCover"></div>
+
+    <div class="kmkt-h">Maerkte auswaehlen <span>aus der Rangliste, nach Umsatzpotenzial. Startjahr je Markt einstellbar.</span></div>
+    <div class="kbestrow">
+      <button class="kbest" id="kBest">&#9733;&nbsp; Beste Strategie zeigen</button>
+      <details class="kaibox"><summary>KI-Einstellungen (optional)</summary>
+        <div class="kaigrid">
+          <label>Anbieter<select id="kAIprov"><option value="anthropic">Claude (Anthropic)</option><option value="openai">ChatGPT (OpenAI)</option></select></label>
+          <label>API-Key<input id="kAIkey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false"></label>
+          <label>Modell<input id="kAImodel" type="text" value="claude-3-5-sonnet-20241022" spellcheck="false"></label>
+        </div>
+        <p class="kainote">Der Key wird nur aus deinem Browser direkt an den Anbieter gesendet und nirgends gespeichert. Ohne Key waehlt ein eingebauter Optimierer die Maerkte.</p>
+      </details>
+    </div>
+    <div class="kbest-note" id="kBestNote" hidden></div>
+    <div class="kmarkets" id="kMarkets"></div>
+  </section>
 </main>
 
 <footer class="foot">
@@ -538,6 +717,30 @@ const DESC={
 8:"Bildung im Alter, Lernen für Senior:innen",
 9:"früher: Digitale Eltern Plattform",
 10:"Digitale Lernstandsakte und Lernverlaufsdaten"};
+
+/* ----- Marktzahlen aus der Marktanalyse (v34): nur Marktvolumen, Umsatzpotenzial, 5-Jahres-Hochlauf ----- */
+const MKT={
+ 1:{vol:"115 Mio",umsatz:"34,5 Mio",ramp:["6,9","13,8","20,7","27,6","34,5"],rampN:[6.9,13.8,20.7,27.6,34.5]},
+ 2:{vol:"30 Mio",umsatz:"9 Mio",ramp:["1,8","3,6","5,4","7,2","9"],rampN:[1.8,3.6,5.4,7.2,9]},
+ 3:{vol:"2,2 Mrd",umsatz:"33 Mio",note:"von max. 660 Mio",ramp:["6,6","13,2","19,8","26,4","33"],rampN:[6.6,13.2,19.8,26.4,33]},
+ 4:{vol:"600 Mio",umsatz:"120 Mio",note:"Startchancen-Programm",ramp:["24","48","72","96","120"],rampN:[24,48,72,96,120]},
+ 5:{vol:"12,5 Mio",umsatz:"3,75 Mio",ramp:["0,8","1,5","2,2","3","3,8"],rampN:[0.8,1.5,2.2,3,3.8]},
+ 6:{vol:"600 Mio",umsatz:"18 Mio",note:"von max. 60 Mio, Angriffssegmente",ramp:["3,6","7,2","10,8","14,4","18"],rampN:[3.6,7.2,10.8,14.4,18]},
+ 7:{vol:"1,5 Mrd",umsatz:"43 Mio",note:"von max. 124 Mio",ramp:["8,6","17,2","25,8","34,4","43"],rampN:[8.6,17.2,25.8,34.4,43]},
+ 8:{vol:"1,44 Mrd",umsatz:"43 Mio",note:"Zielgruppe 60+",ramp:["8,6","17,2","25,8","34,4","43"],rampN:[8.6,17.2,25.8,34.4,43]},
+ 9:{vol:"300 Mio",umsatz:"90 Mio",ramp:["18","36","54","72","90"],rampN:[18,36,54,72,90]},
+ 10:{vol:"35 Mio",umsatz:"10,5 Mio",ramp:["2,1","4,2","6,3","8,4","10,5"],rampN:[2.1,4.2,6.3,8.4,10.5]}
+};
+function mktRow(id){
+  const m=MKT[id]; if(!m) return "";
+  return `<tr class="mktrow"><td colspan="9">
+    <div class="mkt">
+      <span class="mkt-item"><span class="mkt-k">Marktvolumen p.a.</span><b>${m.vol} EUR</b></span>
+      <span class="mkt-item"><span class="mkt-k">Umsatzpotenzial Jahr 5</span><b>${m.umsatz} EUR</b></span>
+      <span class="mkt-item mkt-hoch"><span class="mkt-k">5-Jahres-Hochlauf, Mio EUR</span><span class="rampvals">${m.ramp.join("  /  ")}</span></span>
+    </div>
+  </td></tr>`;
+}
 
 const P=["Heim","H1","H2","H3"], C=["wenig","moderat","viel"], G=["schrumpfend","stagnierend","wachsend","stark wachsend"];
 const PCOL=["var(--p-heim)","var(--p-h1)","var(--p-h2)","var(--p-h3)"];
@@ -619,7 +822,7 @@ function renderTable(rk){
       <td class="dim">${distBar(r.compC,1,DATA.n)}<div class="dimfoot">meist <b>${r.compMode}</b></div></td>
       <td class="dim">${distBar(r.proxC,0,DATA.n)}<div class="dimfoot">meist <b>${r.proxMode}</b></div></td>
       <td><span class="cons">${pct(r.agree)}&#37;</span></td>
-    </tr>`;
+    </tr>${mktRow(r.id)}`;
   }).join("");
 }
 
@@ -821,13 +1024,15 @@ document.querySelectorAll(".preset").forEach(b=>{
   });
 });
 
-/* ----- view mode (Analyse / Roh) ----- */
+/* ----- view mode (Analyse / Roh / Korridor) ----- */
 function applyMode(m){
-  MODE=(m==="raw")?"raw":"analyse";
+  MODE=(m==="raw"||m==="korridor")?m:"analyse";
   document.body.classList.toggle("mode-raw", MODE==="raw");
+  document.body.classList.toggle("mode-korridor", MODE==="korridor");
   document.querySelectorAll(".mt").forEach(function(b){
     var on=b.dataset.mode===MODE; b.classList.toggle("on",on); b.setAttribute("aria-pressed", on?"true":"false");
   });
+  if(MODE==="korridor"){ if(typeof renderKorridor==="function") renderKorridor(); window.scrollTo(0,0); return; }
   var raw=(MODE==="raw");
   var h=document.querySelector("#s4 h2"), p=document.querySelector("#s4 .sechead p");
   if(h) h.textContent = raw ? "Stimmverteilung je Insel" : "Rangliste";
@@ -842,6 +1047,16 @@ document.querySelectorAll(".mt").forEach(function(b){
   b.addEventListener("click",function(){ applyMode(b.dataset.mode); });
 });
 
+/* ----- market figures toggle ----- */
+(function(){
+  var t=document.getElementById("mktToggle"), tbl=document.getElementById("rankTable");
+  if(!t||!tbl) return;
+  t.addEventListener("click",function(){
+    var on=tbl.classList.toggle("mkt-on");
+    t.setAttribute("aria-expanded", on?"true":"false");
+  });
+})();
+
 /* init */
 document.getElementById("m-n").textContent=DATA.n;
 (function(){
@@ -855,6 +1070,235 @@ document.getElementById("m-n").textContent=DATA.n;
 })();
 renderCards(); renderWild(); renderMatrix();
 recompute();
+
+/* ===== Wachstumskorridor ===== */
+var kU=1.5, kK=3.0;
+var KU0=170, KK0=145, KBUF=25, KXMAX=12;
+var KW=920,KH=380,KPL=64,KPR=112,KPT=34,KPB=46,KCW=KW-KPL-KPR,KCH=KH-KPT-KPB;
+var KY1MIN=140,KY1MAX=210;
+var KSCEN={ stabil:{g:0,sel:new Set(),start:{},bubbles:false},
+            gesteigert:{g:0.0125,sel:new Set(),start:{},bubbles:false},
+            moeglich:{g:0.03,sel:new Set(),start:{},bubbles:false} };
+var KSMETA={ stabil:{t:'Stabiles Wachstum',d:'Noetiges Niveau = Kosten + 25 Mio. Der Ergebnispuffer wird konstant gehalten.'},
+             gesteigert:{t:'Gesteigertes Wachstum',d:'Noetiges Niveau = Kosten + 25 Mio, der Puffer waechst zusaetzlich 1,25% pro Jahr.'},
+             moeglich:{t:'Moegliches Wachstum',d:'Noetiges Niveau = Kosten + 25 Mio, der Puffer waechst zusaetzlich 3% pro Jahr.'} };
+var kActive='stabil';
+var kAI={provider:'anthropic', key:'', model:'claude-3-5-sonnet-20241022'};
+var kOrder=DATA.islands.map(function(i){return i.id;}).filter(function(id){return MKT[id];})
+  .sort(function(a,b){return MKT[b].rampN[4]-MKT[a].rampN[4];});
+function kColor(i){var t=i/9,d=[27,94,42],l=[176,214,184];return 'rgb('+Math.round(d[0]+(l[0]-d[0])*t)+','+Math.round(d[1]+(l[1]-d[1])*t)+','+Math.round(d[2]+(l[2]-d[2])*t)+')';}
+var kCol={}; kOrder.forEach(function(id,i){kCol[id]=kColor(i);});
+function SC(){return KSCEN[kActive];}
+function islById(id){return DATA.islands.filter(function(i){return i.id===id;})[0]||{};}
+function islName(id){return islById(id).name||"";}
+function kUAt(t){return KU0*Math.pow(1+kU/100,t);}
+function kKAt(t){return KK0*Math.pow(1+kK/100,t);}
+function kLevel(t,g){return kKAt(t)+KBUF*Math.pow(1+g,t);}
+function kValInt(id,n){var r=MKT[id].rampN; if(n<=0)return 0; if(n>=5)return r[4]; return r[n-1];}
+function kMAt(id,t,s){var x=t-((s||1)-1); if(x<=0)return 0; var lo=Math.floor(x),hi=Math.ceil(x); if(lo===hi)return kValInt(id,lo); return kValInt(id,lo)+(kValInt(id,hi)-kValInt(id,lo))*(x-lo);}
+function kStackAt(t){var sum=0,sc=SC();sc.sel.forEach(function(id){sum+=kMAt(id,t,sc.start[id]||1);});return sum;}
+function kNeed(t){return Math.max(0,kLevel(t,SC().g)-kUAt(t));}
+function kCross(){var u=1+kU/100,k=1+kK/100; if(k>u)return Math.log(KU0/KK0)/Math.log(k/u); return null;}
+function kTop5(){var w=eff();return kOrder.slice().sort(function(a,b){return scoreOf(islById(b),w)-scoreOf(islById(a),w);}).slice(0,5);}
+function fmtDE(v,d){if(d==null)d=1;return v.toFixed(d).replace('.',',');}
+function kx(p){return KPL+(p/KXMAX)*KCW;}
+function ky1(v){return KPT+(1-(v-KY1MIN)/(KY1MAX-KY1MIN))*KCH;}
+function kGridY(){var s='',v,y;for(v=150;v<=200;v+=10){y=ky1(v);s+='<line class="k-grid" x1="'+KPL+'" y1="'+y+'" x2="'+(KPL+KCW)+'" y2="'+y+'"/><text class="k-tick" x="'+(KPL-12)+'" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';}return s;}
+function kLineP(fn){var d='';for(var j=0;j<=KXMAX;j++)d+=(j===0?'M':' L')+kx(j)+','+ky1(fn(j));return d;}
+function kAxisX(){var s='<line class="k-axis" x1="'+KPL+'" y1="'+(KPT+KCH)+'" x2="'+(KPL+KCW)+'" y2="'+(KPT+KCH)+'"/>';
+  for(var i=0;i<=KXMAX;i++)s+='<text class="k-tick" x="'+kx(i)+'" y="'+(KPT+KCH+20)+'" text-anchor="middle">'+i+'</text>';
+  s+='<text class="k-tick" x="'+(KPL+KCW/2)+'" y="'+(KH-7)+'" text-anchor="middle" font-weight="600">Jahre ab heute</text>';return s;}
+
+function renderChart1(){
+  var s='',v,i,y;
+  for(v=150;v<=200;v+=10){y=ky1(v);s+='<line class="k-grid" x1="'+KPL+'" y1="'+y+'" x2="'+(KPL+KCW)+'" y2="'+y+'"/><text class="k-tick" x="'+(KPL-12)+'" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';}
+  s+='<text class="k-alab" x="'+KPL+'" y="'+(KPT-14)+'" text-anchor="start">Wert in Mio. EUR</text>'+kAxisX();
+  s+='<defs><clipPath id="kClip1"><rect x="'+KPL+'" y="'+(KPT-2)+'" width="'+KCW+'" height="'+(KCH+2)+'"/></clipPath></defs><g clip-path="url(#kClip1)">';
+  var band='M'+kx(0)+','+ky1(kUAt(0));
+  for(i=1;i<=KXMAX;i++)band+=' L'+kx(i)+','+ky1(kUAt(i));
+  for(i=KXMAX;i>=0;i--)band+=' L'+kx(i)+','+ky1(kKAt(i));
+  band+=' Z'; s+='<path d="'+band+'" fill="var(--pos)" opacity="0.10"/>';
+  function pth(fn){var d='';for(var j=0;j<=KXMAX;j++)d+=(j===0?'M':' L')+kx(j)+','+ky1(fn(j));return d;}
+  s+='<path d="'+pth(kKAt)+'" fill="none" stroke="var(--yellow)" stroke-width="3" stroke-linejoin="round"/>';
+  s+='<path d="'+pth(kUAt)+'" fill="none" stroke="var(--pos)" stroke-width="3" stroke-linejoin="round"/>';
+  s+='</g>';
+  var cr=kCross();
+  if(cr!==null && cr<=KXMAX){var cx=kx(cr),cy=ky1(kUAt(cr)); if(cy>=KPT&&cy<=KPT+KCH){
+    s+='<line x1="'+cx+'" y1="'+KPT+'" x2="'+cx+'" y2="'+(KPT+KCH)+'" stroke="var(--yellow)" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.85"/>';
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="6" fill="var(--yellow)" stroke="#fff" stroke-width="2"/>';
+    s+='<text class="k-alab" x="'+cx+'" y="'+(KPT-2)+'" text-anchor="middle" fill="var(--yellow)">Voraussichtlicher Kipp-Punkt</text>';}}
+  var kly=Math.max(KPT+10,Math.min(KPT+KCH,ky1(kKAt(KXMAX)))), uly=Math.max(KPT+10,Math.min(KPT+KCH,ky1(kUAt(KXMAX))));
+  s+='<text class="k-llab" x="'+(kx(KXMAX)+8)+'" y="'+(kly-3)+'" fill="var(--yellow)">Kosten +'+fmtDE(kK,1)+'%</text>';
+  s+='<text class="k-llab" x="'+(kx(KXMAX)+8)+'" y="'+(uly+10)+'" fill="var(--pos)">Umsatz +'+fmtDE(kU,1)+'%</text>';
+  s+='<line id="kGuide1" x1="0" y1="'+KPT+'" x2="0" y2="'+(KPT+KCH)+'" stroke="var(--ink)" stroke-width="1" opacity="0"/>';
+  s+='<rect id="kHit1" x="'+KPL+'" y="'+KPT+'" width="'+KCW+'" height="'+KCH+'" fill="transparent"/>';
+  document.getElementById('kChart1').innerHTML=s;
+}
+function renderChart2(){
+  var sc=SC(), g=sc.g, s='',i,t;
+  s+=kGridY()+'<text class="k-alab" x="'+KPL+'" y="'+(KPT-14)+'" text-anchor="start">Wert in Mio. EUR</text>'+kAxisX();
+  s+='<defs><clipPath id="kClip2"><rect x="'+KPL+'" y="'+(KPT-2)+'" width="'+KCW+'" height="'+(KCH+2)+'"/></clipPath></defs><g clip-path="url(#kClip2)">';
+  var ts=[]; for(t=0;t<=KXMAX+0.001;t+=0.5)ts.push(t>KXMAX?KXMAX:t);
+  function lvl(tt){return kLevel(tt,g);}
+  var pb='M'+kx(ts[0])+','+ky1(kUAt(ts[0])); ts.forEach(function(tt){pb+=' L'+kx(tt)+','+ky1(kUAt(tt));});
+  for(i=ts.length-1;i>=0;i--)pb+=' L'+kx(ts[i])+','+ky1(kKAt(ts[i])); pb+=' Z';
+  s+='<path d="'+pb+'" fill="var(--pos)" opacity="0.07"/>';
+  var selIds=kOrder.filter(function(id){return sc.sel.has(id);});
+  if(!sc.bubbles){
+    var cum=ts.map(function(){return 0;});
+    selIds.forEach(function(id){var sy=sc.start[id]||1;
+      var lo=ts.map(function(tt,i){return kUAt(tt)+cum[i];});
+      var up=ts.map(function(tt,i){return kUAt(tt)+cum[i]+kMAt(id,tt,sy);});
+      var d='M'+kx(ts[0])+','+ky1(lo[0]);
+      ts.forEach(function(tt,i){d+=' L'+kx(tt)+','+ky1(up[i]);});
+      for(i=ts.length-1;i>=0;i--)d+=' L'+kx(ts[i])+','+ky1(lo[i]);
+      d+=' Z'; s+='<path d="'+d+'" fill="'+kCol[id]+'" opacity="0.92" stroke="#fff" stroke-width="0.9" stroke-opacity="0.6"/>';
+      cum=cum.map(function(p,i){return p+kMAt(id,ts[i],sy);});
+    });
+    if(selIds.length){var tl=''; ts.forEach(function(tt,i){tl+=(i===0?'M':' L')+kx(tt)+','+ky1(kUAt(tt)+cum[i]);}); s+='<path d="'+tl+'" fill="none" stroke="var(--pos)" stroke-width="1.8"/>';}
+  }
+  s+='<path d="'+kLineP(kKAt)+'" fill="none" stroke="var(--yellow)" stroke-width="3" stroke-linejoin="round"/>';
+  s+='<path d="'+kLineP(kUAt)+'" fill="none" stroke="var(--pos)" stroke-width="3" stroke-linejoin="round"/>';
+  s+='<path d="'+kLineP(lvl)+'" fill="none" stroke="#1B5E2A" stroke-width="2.4" stroke-dasharray="6 4"/>';
+  var bubPos=[];
+  if(sc.bubbles){
+    var groups={}; selIds.forEach(function(id){var sy=sc.start[id]||1;(groups[sy]=groups[sy]||[]).push(id);});
+    Object.keys(groups).forEach(function(syk){var ids=groups[syk], bx=kx(+syk), baseY=ky1(kUAt(+syk));
+      ids.forEach(function(id,k){var j5=MKT[id].rampN[4], r=Math.min(34,3.6*Math.sqrt(j5)), cy=baseY;
+        if(k>0){var pr=bubPos[bubPos.length-1]; cy=(pr.cy-pr.r)-r-4;}
+        bubPos.push({id:id,bx:bx,cy:cy,r:r,j5:j5});
+      });
+    });
+    bubPos.forEach(function(p){
+      s+='<circle cx="'+p.bx+'" cy="'+p.cy.toFixed(1)+'" r="'+p.r.toFixed(1)+'" fill="'+kCol[p.id]+'" fill-opacity="0.82" stroke="'+kCol[p.id]+'" stroke-width="1.5"/>';
+      if(p.r>=13) s+='<text class="k-bubv" x="'+p.bx+'" y="'+(p.cy+4).toFixed(1)+'" font-size="'+(p.r>24?13:11)+'">'+fmtDE(p.j5,0)+'</text>';
+    });
+  }
+  s+='</g>';
+  if(sc.bubbles){ bubPos.forEach(function(p){var nm=islName(p.id); if(nm.length>15)nm=nm.slice(0,14)+'.';
+      var right=p.bx+p.r+8+nm.length*6.4 < KPL+KCW;
+      s+='<text class="k-note" x="'+(right?(p.bx+p.r+6):(p.bx-p.r-6)).toFixed(1)+'" y="'+(p.cy+3.5).toFixed(1)+'" text-anchor="'+(right?'start':'end')+'" fill="var(--ink2)" font-weight="700">'+esc(nm)+'</text>';
+  }); }
+  var cr=kCross();
+  if(cr!==null && cr<=KXMAX){var cx=kx(cr),cy=ky1(kUAt(cr)); if(cy>=KPT&&cy<=KPT+KCH) s+='<circle cx="'+cx+'" cy="'+cy+'" r="5" fill="var(--yellow)" stroke="#fff" stroke-width="2"/>';}
+  var texit=null; for(t=0.5;t<=KXMAX;t+=0.25){ if(kLevel(t,g)>=KY1MAX){texit=t;break;} }
+  var lblx=texit!==null?kx(texit):kx(KXMAX)-34;
+  s+='<text class="k-alab" x="'+lblx+'" y="'+(KPT-2)+'" text-anchor="middle" fill="#1B5E2A">Noetiges Niveau</text>';
+  var kly=Math.max(KPT+10,Math.min(KPT+KCH,ky1(kKAt(KXMAX)))), uly=Math.max(KPT+10,Math.min(KPT+KCH,ky1(kUAt(KXMAX))));
+  s+='<text class="k-llab" x="'+(kx(KXMAX)+8)+'" y="'+(kly-3)+'" fill="var(--yellow)">Kosten</text>';
+  s+='<text class="k-llab" x="'+(kx(KXMAX)+8)+'" y="'+(uly+11)+'" fill="var(--pos)">Umsatz</text>';
+  s+='<line id="kGuide2" x1="0" y1="'+KPT+'" x2="0" y2="'+(KPT+KCH)+'" stroke="var(--ink)" stroke-width="1" opacity="0"/>';
+  s+='<rect id="kHit2" x="'+KPL+'" y="'+KPT+'" width="'+KCW+'" height="'+KCH+'" fill="transparent"/>';
+  document.getElementById('kChart2').innerHTML=s;
+}
+function renderKipp(){
+  var cr=kCross(), el=document.getElementById('kKipp');
+  if(cr!==null && cr>0){var yrs=fmtDE(cr,1),d=new Date();d.setDate(d.getDate()+Math.round(cr*365.2425));
+    var mon=['Januar','Februar','Maerz','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+    el.innerHTML='Ergebnis heute <b>+25,0 Mio</b>. Voraussichtlicher Kipp-Punkt: <b class="neg">in '+yrs+' Jahren</b> (ca. '+mon[d.getMonth()]+' '+d.getFullYear()+'), dann faellt das Ergebnis trotz Wachstum ins Negative.';
+  } else el.innerHTML='Ergebnis heute <b>+25,0 Mio</b>. Hier waechst der Umsatz mindestens so schnell wie die Kosten: <b class="pos">kein Kipp-Punkt</b>, die Schere bleibt offen.';
+}
+function renderCover(){
+  var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), got=kStackAt(ref), el=document.getElementById('kCover'), sc=SC();
+  if(!sc.sel.size){ el.innerHTML='Noch keine Maerkte gewaehlt. Bedarf am Kipp-Punkt (Jahr '+fmtDE(ref,1)+'): <b>'+fmtDE(need,1)+' Mio</b>.'; return; }
+  if(need<=0){ el.innerHTML='Kein zusaetzliches Wachstum noetig. Gewaehlt: <b class="pos">'+fmtDE(got,1)+' Mio</b>.'; return; }
+  var pctc=Math.round(100*got/need), cls=got>=need?'pos':'neg', flag=got>=need?'gedeckt':'nicht gedeckt';
+  el.innerHTML='Bedarf am Kipp-Punkt (Jahr '+fmtDE(ref,1)+'): <b>'+fmtDE(need,1)+' Mio</b> &middot; gewaehlt: <b class="pos">'+fmtDE(got,1)+' Mio</b> &middot; <b class="'+cls+'">'+pctc+'&#37; '+flag+'</b>.';
+}
+function renderScenMeta(){
+  document.getElementById('kScenTitle').textContent=KSMETA[kActive].t;
+  document.getElementById('kScenDesc').textContent=KSMETA[kActive].d;
+  document.querySelectorAll('#sk .kst').forEach(function(b){var on=b.dataset.scen===kActive;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false');});
+  document.querySelectorAll('#sk .kvt').forEach(function(b){b.classList.toggle('on',(b.dataset.v==='bubbles')===SC().bubbles);});
+}
+function renderSelector(){
+  var mk=document.getElementById('kMarkets'); if(!mk)return; var sc=SC(), top5=kTop5();
+  mk.innerHTML=kOrder.map(function(id){var on=sc.sel.has(id), badge=top5.indexOf(id)>=0?'<span class="ktop5">Top 5</span>':'', st=sc.start[id]||1;
+    return '<div class="kmk'+(on?' on':'')+'" data-id="'+id+'" style="--mkc:'+kCol[id]+'"><span class="box"></span><span class="knm">'+esc(islName(id))+'</span><span class="krt">'+badge+'<span class="kpot">J5 <b>'+MKT[id].umsatz+' EUR</b></span><span class="kstart">Start <input type="number" min="1" max="12" value="'+st+'" data-sid="'+id+'"></span></span></div>';
+  }).join('');
+}
+function renderKorridor(){ renderChart1(); renderScenMeta(); renderSelector(); renderChart2(); renderKipp(); renderCover(); }
+
+function kOptimize(){
+  var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), w=eff();
+  var cand=kOrder.map(function(id){return {id:id,score:scoreOf(islById(id),w),j5:MKT[id].rampN[4]};}).sort(function(a,b){return b.score-a.score;});
+  var chosen=[],sum=0; for(var i=0;i<cand.length && sum<need;i++){chosen.push(cand[i].id);sum+=cand[i].j5;}
+  if(!chosen.length && cand.length){chosen.push(cand[0].id);sum=cand[0].j5;}
+  return {ids:chosen, rationale:'Eingebauter Optimierer: die '+chosen.length+' bestbewerteten Maerkte (Voting-Score) decken den Bedarf von '+fmtDE(need,1)+' Mio (Summe J5 '+fmtDE(sum,1)+' Mio), alle ab Jahr 1.'};
+}
+function kAICall(){
+  var prov=kAI.provider, key=kAI.key.trim(), model=kAI.model.trim();
+  var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), w=eff();
+  var markets=kOrder.map(function(id){return {id:id,name:islName(id),umsatzpotenzial_j5_mio:MKT[id].rampN[4],marktvolumen:MKT[id].vol,voting_score:Math.round(scoreOf(islById(id),w)*10)/10};});
+  var sys='Du bist Strategieberater fuer einen Verlag. Waehle die optimale Teilmenge an Maerkten und je Markt ein Startjahr (1-5), um den zusaetzlichen jaehrlichen Wachstumsbedarf am Kipp-Punkt zu decken. Bevorzuge hohe Voting-Scores, eine realistische zeitliche Staffelung der Starts und moeglichst wenige Maerkte mit etwas Puffer. Antworte ausschliesslich mit JSON, kein Text davor oder danach.';
+  var usr='Bedarf am Kipp-Punkt (Jahr '+fmtDE(ref,1)+'): '+fmtDE(need,1)+' Mio EUR zusaetzlicher Jahresumsatz. Ein Markt erreicht sein Umsatzpotenzial (J5) ueber 5 Jahre ab seinem Startjahr und bleibt danach konstant. Maerkte: '+JSON.stringify(markets)+'. Antworte als JSON: {"markets":[{"id":Zahl,"start":Zahl}],"rationale":"kurze Begruendung auf Deutsch, unter 320 Zeichen"}.';
+  var url,headers,body;
+  if(prov==='openai'){ url='https://api.openai.com/v1/chat/completions'; headers={'Content-Type':'application/json','Authorization':'Bearer '+key}; body={model:model,temperature:0.2,messages:[{role:'system',content:sys},{role:'user',content:usr}],response_format:{type:'json_object'}}; }
+  else { url='https://api.anthropic.com/v1/messages'; headers={'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}; body={model:model,max_tokens:1024,system:sys,messages:[{role:'user',content:usr}]}; }
+  return fetch(url,{method:'POST',headers:headers,body:JSON.stringify(body)}).then(function(res){return res.text().then(function(tx){if(!res.ok)throw new Error('HTTP '+res.status+': '+tx.slice(0,150)); return tx;});}).then(function(tx){
+    var data=JSON.parse(tx);
+    var txt=prov==='openai' ? (data.choices&&data.choices[0]&&data.choices[0].message.content) : (data.content&&data.content.map(function(b){return b.text||'';}).join(''));
+    txt=(txt||'').replace(/```json|```/g,'').trim(); var m=txt.indexOf('{'),n=txt.lastIndexOf('}'); if(m>0||n<txt.length-1)txt=txt.slice(m,n+1);
+    return JSON.parse(txt);
+  });
+}
+function kRunBest(){
+  var sc=SC(), btn=document.getElementById('kBest'), note=document.getElementById('kBestNote'), orig=btn.innerHTML;
+  btn.disabled=true; sc.sel.clear(); sc.start={};
+  function done(){btn.disabled=false; btn.innerHTML=orig; renderSelector(); renderChart2(); renderCover();}
+  if(kAI.key.trim()){
+    btn.innerHTML='KI denkt...'; note.hidden=false; note.innerHTML='Frage '+(kAI.provider==='openai'?'ChatGPT':'Claude')+' nach der besten Strategie...';
+    kAICall().then(function(r){
+      (r.markets||[]).forEach(function(m){var id=+m.id; if(MKT[id]){sc.sel.add(id); sc.start[id]=Math.max(1,Math.min(12,parseInt(m.start,10)||1));}});
+      if(!sc.sel.size) throw new Error('keine gueltigen Maerkte');
+      note.innerHTML='<b>'+(kAI.provider==='openai'?'ChatGPT':'Claude')+' ('+esc(kAI.model)+'):</b> '+esc(r.rationale||'Auswahl getroffen.'); done();
+    }).catch(function(e){
+      var o=kOptimize(); o.ids.forEach(function(id){sc.sel.add(id);sc.start[id]=1;});
+      note.innerHTML='<b>KI nicht erreichbar, eingebauter Optimierer genutzt.</b> '+esc(o.rationale)+' <span class="kerr">('+esc(e.message)+')</span>'; done();
+    });
+  } else { var o=kOptimize(); o.ids.forEach(function(id){sc.sel.add(id);sc.start[id]=1;}); note.hidden=false; note.innerHTML=esc(o.rationale); done(); }
+}
+
+(function(){
+  var mk=document.getElementById('kMarkets'); if(!mk) return;
+  mk.addEventListener('click',function(e){ if(e.target.closest('.kstart'))return; var l=e.target.closest('.kmk'); if(!l)return;
+    var id=+l.dataset.id, sc=SC(); if(sc.sel.has(id))sc.sel.delete(id); else {sc.sel.add(id); if(!sc.start[id])sc.start[id]=1;}
+    l.classList.toggle('on'); renderChart2(); renderCover(); });
+  mk.addEventListener('input',function(e){ var inp=e.target.closest('input[data-sid]'); if(!inp)return;
+    var id=+inp.dataset.sid, v=Math.max(1,Math.min(12,parseInt(inp.value,10)||1)); SC().start[id]=v; renderChart2(); renderCover(); });
+  document.querySelectorAll('#sk .kst').forEach(function(b){b.addEventListener('click',function(){ kActive=b.dataset.scen; renderScenMeta(); renderSelector(); renderChart2(); renderCover(); });});
+  document.querySelectorAll('#sk .kvt').forEach(function(b){b.addEventListener('click',function(){ SC().bubbles=(b.dataset.v==='bubbles'); renderScenMeta(); renderChart2(); });});
+  document.querySelectorAll('#sk .kbtn').forEach(function(b){b.addEventListener('click',function(){
+    var t=b.dataset.t, dd=parseFloat(b.dataset.d);
+    if(t==='u'){kU=Math.min(8,Math.max(0,Math.round((kU+dd)*10)/10));document.getElementById('kUVal').textContent=fmtDE(kU,1);}
+    else {kK=Math.min(8,Math.max(0,Math.round((kK+dd)*10)/10));document.getElementById('kKVal').textContent=fmtDE(kK,1);}
+    renderKorridor();});});
+  document.getElementById('kReset').addEventListener('click',function(){kU=1.5;kK=3.0;document.getElementById('kUVal').textContent='1,5';document.getElementById('kKVal').textContent='3,0';renderKorridor();});
+  var prov=document.getElementById('kAIprov'), keyi=document.getElementById('kAIkey'), modeli=document.getElementById('kAImodel');
+  if(prov)prov.addEventListener('change',function(){kAI.provider=this.value; if(this.value==='openai'&&/claude/i.test(modeli.value))modeli.value='gpt-4o-mini'; if(this.value==='anthropic'&&/gpt/i.test(modeli.value))modeli.value='claude-3-5-sonnet-20241022'; kAI.model=modeli.value;});
+  if(keyi)keyi.addEventListener('input',function(){kAI.key=this.value;});
+  if(modeli)modeli.addEventListener('input',function(){kAI.model=this.value;});
+  var best=document.getElementById('kBest'); if(best)best.addEventListener('click',kRunBest);
+  function kHook(svgId,tipId,gId,builder){var svg=document.getElementById(svgId),tip=document.getElementById(tipId);
+    svg.addEventListener('mousemove',function(e){var r=svg.getBoundingClientRect();var vbx=(e.clientX-r.left)/r.width*KW;var yr=(vbx-KPL)/KCW*KXMAX;var g=document.getElementById(gId);
+      if(yr<0||yr>KXMAX){tip.hidden=true;if(g)g.setAttribute('opacity','0');return;}
+      var info=builder(yr);var gx=kx(yr);if(g){g.setAttribute('x1',gx);g.setAttribute('x2',gx);g.setAttribute('opacity','0.3');}
+      tip.innerHTML=info.html;tip.hidden=false;tip.style.left=(gx/KW*r.width)+'px';tip.style.top=(info.vy/KH*r.height)+'px';});
+    svg.addEventListener('mouseleave',function(){tip.hidden=true;var g=document.getElementById(gId);if(g)g.setAttribute('opacity','0');});}
+  kHook('kChart1','kTip1','kGuide1',function(yr){var u=kUAt(yr),k=kKAt(yr),e=u-k;
+    return {vy:ky1(Math.max(u,k))-6, html:'<div class="tt-h">Jahr '+fmtDE(yr,1)+'</div>'+
+      '<div class="tt-r"><span class="d"><span class="sw" style="background:var(--pos)"></span>Umsatz</span><span>'+fmtDE(u,1)+' Mio</span></div>'+
+      '<div class="tt-r"><span class="d"><span class="sw" style="background:var(--yellow)"></span>Kosten</span><span>'+fmtDE(k,1)+' Mio</span></div>'+
+      '<div class="tt-r tt-tot"><span>Ergebnis</span><span style="color:'+(e>=0?'#9be7b4':'#ff9aa0')+'">'+(e>=0?'+':'')+fmtDE(e,1)+' Mio</span></div>'};});
+  kHook('kChart2','kTip2','kGuide2',function(yr){
+    var need=kNeed(yr),got=kStackAt(yr),rows='',sc=SC();
+    kOrder.forEach(function(id){if(sc.sel.has(id)){var v=kMAt(id,yr,sc.start[id]||1);if(v>0.05)rows+='<div class="tt-r"><span class="d"><span class="sw" style="background:'+kCol[id]+'"></span>'+esc(islName(id)).slice(0,16)+'</span><span>'+fmtDE(v,1)+'</span></div>';}});
+    var anchor=Math.min(KY1MAX-2, kUAt(yr)+Math.max(need,got));
+    return {vy:ky1(anchor)-6, html:'<div class="tt-h">Jahr '+fmtDE(yr,1)+'</div>'+
+      '<div class="tt-r"><span class="d"><span class="sw" style="background:#1B5E2A"></span>Bedarf</span><span>'+fmtDE(need,1)+' Mio</span></div>'+rows+
+      '<div class="tt-r tt-tot"><span>Gewaehlt</span><span style="color:#9be7b4">'+fmtDE(got,1)+' Mio</span></div>'};});
+  renderKorridor();
+})();
 
 /* floating section nav */
 (function(){
