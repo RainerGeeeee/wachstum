@@ -189,20 +189,31 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
 .foot .b span{color:rgba(255,255,255,.45)}
 
 /* ---------- worked example ---------- */
-.worked{margin-top:28px;background:var(--grey);padding:26px 28px}
-.worked-h{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin-bottom:16px}
-.worked-h span{color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
+.exbox{margin-top:28px}
+.exbox .mx-body{padding:6px 20px 22px}
+.worked-sub{margin:22px 0 12px;font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.worked-sub span{color:var(--faint);font-weight:400;text-transform:none;letter-spacing:0;margin-left:6px}
+.worked-idx{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;font-size:13px;line-height:1.55;color:var(--ink)}
+.worked-idx li{display:flex;gap:9px;align-items:baseline}
+.worked-idx b{font-weight:700;min-width:148px;flex:0 0 auto}
+.worked-idx code{font-family:"JetBrains Mono",monospace;font-size:12px;background:var(--grey);border:1px solid var(--hair);padding:1px 6px}
+.worked-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin-bottom:16px}
+.worked-h .wh-lens{color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
+.worked-h .wh-lens b{color:var(--ink);font-weight:700}
+.ex-sel{font-family:"Archivo",system-ui,sans-serif;font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink);background:#fff;border:1px solid var(--hair);padding:5px 9px;cursor:pointer;border-radius:0}
+.ex-sel:hover{border-color:rgba(0,0,0,.28)}
 .worked-steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:11px;font-size:13px;line-height:1.6;color:var(--ink)}
 .worked-steps li::marker{color:var(--faint);font-family:"JetBrains Mono",monospace;font-weight:700}
-.worked-steps code{font-family:"JetBrains Mono",monospace;font-size:12px;background:#fff;border:1px solid var(--hair);padding:1px 6px;white-space:nowrap}
+.worked-steps code{font-family:"JetBrains Mono",monospace;font-size:12px;background:var(--grey);border:1px solid var(--hair);padding:1px 6px;white-space:nowrap}
 .worked-result{margin-top:18px;padding-top:15px;border-top:1px solid var(--hair);font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--muted)}
 .worked-result b{color:var(--pos);font-size:20px}
 
 /* ---------- floating nav ---------- */
 .navwrap{position:fixed;top:16px;right:16px;z-index:60;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .25s,transform .25s}
 .navwrap.show{opacity:1;transform:none;pointer-events:auto}
-.navbtn{width:44px;height:44px;background:#fff;border:1px solid var(--hair);box-shadow:0 2px 12px rgba(0,0,0,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;margin-left:auto;padding:0}
-.navbtn span{display:block;width:18px;height:2px;background:var(--ink);transition:transform .2s,opacity .2s}
+.navbtn{width:46px;height:46px;background:var(--yellow);border:none;box-shadow:0 3px 14px rgba(226,0,26,.40),0 1px 3px rgba(0,0,0,.18);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;margin-left:auto;padding:0;transition:background .15s,box-shadow .15s}
+.navbtn:hover{background:var(--yellowdk);box-shadow:0 5px 18px rgba(226,0,26,.48),0 1px 3px rgba(0,0,0,.2)}
+.navbtn span{display:block;width:19px;height:2px;background:#fff;transition:transform .2s,opacity .2s}
 .navbtn[aria-expanded=true] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
 .navbtn[aria-expanded=true] span:nth-child(2){opacity:0}
 .navbtn[aria-expanded=true] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
@@ -460,16 +471,20 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
         </ul>
       </div>
     </div>
-    <div class="worked">
-      <div class="worked-h">Rechenbeispiel <span>Vorschule, Linse Ausgewogen (40 / 30 / 30)</span></div>
-      <ol class="worked-steps">
-        <li><b>Wachstum.</b> Stufenpunkte schrumpfend bis stark = 0 / 1 / 2 / 3. Stimmen: 8&times; wachsend, 2&times; stark. Mittel <code>(8&times;2 + 2&times;3) / 10 = 2.2</code>, normiert <code>&divide; 3 = 0.733</code></li>
-        <li><b>Wettbewerb.</b> Vorteilspunkte viel / moderat / wenig = 1 / 2 / 3, normiert auf 0 / 0.5 / 1. Stimmen: 4&times; viel, 3&times; moderat, 3&times; wenig. Mittel <code>(4&times;0 + 3&times;0.5 + 3&times;1) / 10 = 0.450</code></li>
-        <li><b>Naehe.</b> Distanz Heim / H1 / H2 / H3 = 0 / 1 / 2 / 3, der Score nutzt die Naehe (3 minus Distanz) und normiert &divide; 3 = 1 / 0.667 / 0.333 / 0. Stimmen: 2&times; Heim, 6&times; H1, 2&times; H2. Mittel <code>(2&times;1 + 6&times;0.667 + 2&times;0.333) / 10 = 0.667</code></li>
-        <li><b>Score.</b> Gewichte der Linse 0.40 / 0.30 / 0.30. <code>100 &times; (0.40&times;0.733 + 0.30&times;0.450 + 0.30&times;0.667) = 100 &times; 0.628</code></li>
-      </ol>
-      <div class="worked-result">Score Vorschule = <b>62.8</b> / 100. Verschiebt man die Gewichte, rechnet die Linse oben live neu.</div>
-    </div>
+    <details class="mx exbox">
+      <summary>Rechenbeispiel: Herleitung von Score und Kennzahlen</summary>
+      <div class="mx-body">
+        <div class="worked-h">
+          <span>Rechenbeispiel</span>
+          <select id="ex-sel" class="ex-sel" aria-label="Insel fuer das Rechenbeispiel"></select>
+          <span class="wh-lens" id="ex-lens"></span>
+        </div>
+        <ol class="worked-steps" id="ex-steps"></ol>
+        <div class="worked-sub">Kennzahlen der Detailkarte <span>gewichtungsunabhaengig, aendern sich nur mit der Insel</span></div>
+        <ul class="worked-idx" id="ex-idx"></ul>
+        <div class="worked-result" id="ex-result"></div>
+      </div>
+    </details>
   </section>
 </main>
 
@@ -711,6 +726,37 @@ function caption(){
   cap.innerHTML=lead;
 }
 
+/* ----- live worked example ----- */
+var EX_Pg=[0,1,2,3], EX_Pc=[1,0.5,0], EX_Pd=[0,1,2,3], EX_PLBL=["Heim","H1","H2","H3"];
+function exTerms(counts,pts){return counts.map(function(c,i){return c>0?(c+"&times;"+pts[i]):null;}).filter(Boolean).join(" + ");}
+function exVotes(counts,labels){return counts.map(function(c,i){return c>0?(c+"&times; "+labels[i]):null;}).filter(Boolean).join(", ");}
+function exLensLabel(){var a=document.querySelector(".preset.on");return a?a.textContent:"Eigene Gewichtung";}
+function renderExample(rk){
+  var sel=document.getElementById("ex-sel"); if(!sel) return;
+  var d = sel.value==="auto" ? rk[0] : (DATA.islands.filter(function(x){return String(x.id)===sel.value;})[0]||rk[0]);
+  var w=eff(), score=scoreOf(d,w);
+  var wg=w.g.toFixed(2), wc=w.c.toFixed(2), wp=w.p.toFixed(2);
+  var gN=d.gNorm.toFixed(3), eN=d.eNorm.toFixed(3), pN=d.pNorm.toFixed(3);
+  var gMean=d.growMean.toFixed(1), dMean=d.proxMean.toFixed(1);
+  document.getElementById("ex-lens").innerHTML="&middot; Linse <b>"+esc(exLensLabel())+"</b> &middot; Gewichte "+wg+" / "+wc+" / "+wp;
+  var steps=[
+    "<li><b>Wachstum.</b> Stimmen: "+exVotes(d.growC,G)+". Stufenpunkte schrumpfend bis stark = 0 / 1 / 2 / 3. Mittel <code>("+exTerms(d.growC,EX_Pg)+") / "+DATA.n+" = "+gMean+"</code>, normiert <code>&divide; 3 = "+gN+"</code></li>",
+    "<li><b>Wettbewerb.</b> Stimmen: "+exVotes(d.compC,C)+". Vorteilspunkte wenig / moderat / viel = 1 / 0.5 / 0 (geringe Konkurrenz zaehlt positiv). Mittel <code>("+exTerms(d.compC,EX_Pc)+") / "+DATA.n+" = "+eN+"</code></li>",
+    "<li><b>Naehe.</b> Stimmen: "+exVotes(d.proxC,EX_PLBL)+". Distanz Heim bis H3 = 0 / 1 / 2 / 3. Mittlere Distanz <code>("+exTerms(d.proxC,EX_Pd)+") / "+DATA.n+" = "+dMean+"</code>, Naehe <code>(3 &#8722; "+dMean+") &divide; 3 = "+pN+"</code></li>",
+    "<li><b>Score.</b> Gewichtet mit der aktuellen Linse: <code>100 &times; ("+wg+"&times;"+gN+" + "+wc+"&times;"+eN+" + "+wp+"&times;"+pN+") &#8776; "+score.toFixed(1)+"</code></li>"
+  ];
+  document.getElementById("ex-steps").innerHTML=steps.join("");
+  var nIdx=pct(d.pNorm), aIdx=pct(attr(d)), kIdx=pct(d.agree);
+  var sP=(Math.max.apply(null,d.proxC)/DATA.n), sC=(Math.max.apply(null,d.compC)/DATA.n), sG=(Math.max.apply(null,d.growC)/DATA.n);
+  var idx=[
+    "<li><b>Naehe-Index</b> Naehe-Wert aus Schritt 3, mal 100: <code>"+pN+" &times; 100 &#8776; "+nIdx+"&#37;</code></li>",
+    "<li><b>Attraktivitaets-Index</b> Mittel aus Wachstum und Wettbewerb: <code>("+gN+" + "+eN+") / 2 &times; 100 &#8776; "+aIdx+"&#37;</code></li>",
+    "<li><b>Konsens</b> Mittel der Mehrheitsanteile je Kriterium (Naehe "+Math.max.apply(null,d.proxC)+"/"+DATA.n+", Wettbewerb "+Math.max.apply(null,d.compC)+"/"+DATA.n+", Wachstum "+Math.max.apply(null,d.growC)+"/"+DATA.n+"): <code>("+sP.toFixed(1)+" + "+sC.toFixed(1)+" + "+sG.toFixed(1)+") / 3 &#8776; "+kIdx+"&#37;</code></li>"
+  ];
+  document.getElementById("ex-idx").innerHTML=idx.join("");
+  document.getElementById("ex-result").innerHTML="Score "+esc(d.name)+" = <b>"+score.toFixed(1)+"</b> / 100"+(sel.value==="auto"?" (aktuell Rang 1)":"")+". Schiebe die Gewichte oben, der Wert rechnet live mit.";
+}
+
 /* ----- wiring ----- */
 function syncSliders(){
   document.getElementById("s-g").value=W.g; document.getElementById("v-g").textContent=W.g+"\u0025";
@@ -720,7 +766,7 @@ function syncSliders(){
 function recompute(){
   syncSliders(); caption();
   const rk=ranked();
-  renderReco(rk); renderTable(rk); renderMap(rk);
+  renderReco(rk); renderTable(rk); renderMap(rk); renderExample(rk);
 }
 function matchPreset(){
   let matched=null;
@@ -740,12 +786,21 @@ document.querySelectorAll(".preset").forEach(b=>{
   document.getElementById(id).addEventListener("input",e=>{
     W[key]=+e.target.value; document.getElementById(vid).textContent=W[key]+"\u0025";
     matchPreset(); caption();
-    const rk=ranked(); renderReco(rk); renderTable(rk); renderMap(rk);
+    const rk=ranked(); renderReco(rk); renderTable(rk); renderMap(rk); renderExample(rk);
   });
 });
 
 /* init */
 document.getElementById("m-n").textContent=DATA.n;
+(function(){
+  var sel=document.getElementById("ex-sel");
+  if(sel){
+    var opts=['<option value="auto">Automatisch: Rang 1</option>'];
+    DATA.islands.forEach(function(i){ opts.push('<option value="'+i.id+'">'+esc(i.name)+'</option>'); });
+    sel.innerHTML=opts.join("");
+    sel.addEventListener("change",function(){ renderExample(ranked()); });
+  }
+})();
 renderCards(); renderWild(); renderMatrix();
 recompute();
 
