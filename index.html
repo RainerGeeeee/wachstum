@@ -22,6 +22,7 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{background:var(--paper);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
 .mono{font-family:"JetBrains Mono",ui-monospace,monospace}
 .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
@@ -44,7 +45,7 @@ h1{font-weight:700;font-size:27px;letter-spacing:-.022em;margin:0;color:var(--in
 .chip b{color:var(--ink);font-weight:700}
 
 /* ---------- generic section ---------- */
-section{padding:56px 0;border-bottom:1px solid var(--line2)}
+section{padding:56px 0;border-bottom:1px solid var(--line2);scroll-margin-top:18px}
 .sechead{display:flex;align-items:baseline;gap:14px;margin:0 0 24px;flex-wrap:wrap}
 .snum{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--faint);font-weight:700;letter-spacing:.1em}
 .sechead h2{font-size:24px;font-weight:700;letter-spacing:-.022em;margin:0}
@@ -187,6 +188,30 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
 .foot .b{font-weight:800;font-size:15px}
 .foot .b span{color:rgba(255,255,255,.45)}
 
+/* ---------- worked example ---------- */
+.worked{margin-top:28px;background:var(--grey);padding:26px 28px}
+.worked-h{font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin-bottom:16px}
+.worked-h span{color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
+.worked-steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:11px;font-size:13px;line-height:1.6;color:var(--ink)}
+.worked-steps li::marker{color:var(--faint);font-family:"JetBrains Mono",monospace;font-weight:700}
+.worked-steps code{font-family:"JetBrains Mono",monospace;font-size:12px;background:#fff;border:1px solid var(--hair);padding:1px 6px;white-space:nowrap}
+.worked-result{margin-top:18px;padding-top:15px;border-top:1px solid var(--hair);font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--muted)}
+.worked-result b{color:var(--pos);font-size:20px}
+
+/* ---------- floating nav ---------- */
+.navwrap{position:fixed;top:16px;right:16px;z-index:60;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .25s,transform .25s}
+.navwrap.show{opacity:1;transform:none;pointer-events:auto}
+.navbtn{width:44px;height:44px;background:#fff;border:1px solid var(--hair);box-shadow:0 2px 12px rgba(0,0,0,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;margin-left:auto;padding:0}
+.navbtn span{display:block;width:18px;height:2px;background:var(--ink);transition:transform .2s,opacity .2s}
+.navbtn[aria-expanded=true] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.navbtn[aria-expanded=true] span:nth-child(2){opacity:0}
+.navbtn[aria-expanded=true] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.navpanel{position:absolute;top:52px;right:0;min-width:236px;background:#fff;border:1px solid var(--hair);box-shadow:0 12px 44px rgba(0,0,0,.16);padding:8px;display:none}
+.navpanel.open{display:block}
+.navpanel a{display:flex;align-items:baseline;gap:11px;padding:9px 12px;font-size:13px;color:var(--ink);text-decoration:none;font-weight:600;letter-spacing:-.01em}
+.navpanel a:hover{background:var(--grey)}
+.navpanel a i{font-family:"JetBrains Mono",monospace;font-style:normal;font-size:11px;color:var(--faint);font-weight:700;width:18px;flex:0 0 auto}
+
 /* ---------- responsive ---------- */
 @media(max-width:860px){
   .console{grid-template-columns:1fr}
@@ -219,7 +244,6 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
 <header class="top">
   <div class="wrap">
     <div class="brand">
-      <div class="glyph" aria-hidden="true"></div>
       <div>
         <p class="wordmark">Ernst Klett Verlag</p>
         <p class="eyebrow">Wachstumsstrategie // Marktpriorisierung</p>
@@ -235,10 +259,26 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
   </div>
 </header>
 
+<div class="navwrap" id="navwrap">
+  <button class="navbtn" id="navbtn" aria-label="Abschnitte" aria-expanded="false" aria-controls="navpanel">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="navpanel" id="navpanel" aria-label="Abschnitte">
+    <a href="#s1"><i>01</i>Strategische Linse</a>
+    <a href="#s2"><i>02</i>Drei Signale</a>
+    <a href="#s3"><i>03</i>Attraktivitaet x Naehe</a>
+    <a href="#s4"><i>04</i>Rangliste</a>
+    <a href="#s5"><i>05</i>Insel-Detail</a>
+    <a href="#s6"><i>06</i>Wild Cards</a>
+    <a href="#s7"><i>07</i>Einzelstimmen</a>
+    <a href="#s8"><i>08</i>Methodik</a>
+  </nav>
+</div>
+
 <main class="wrap">
 
   <!-- 01 LENS + RECOMMENDATION -->
-  <section class="fade" style="border-bottom:none;padding-bottom:14px">
+  <section class="fade" id="s1" style="border-bottom:none;padding-bottom:14px">
     <div class="sechead">
       <span class="snum">01</span>
       <h2>Strategische Linse</h2>
@@ -279,7 +319,7 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
   </section>
 
   <!-- 02 SIGNALS -->
-  <section class="fade">
+  <section class="fade" id="s2">
     <div class="sechead">
       <span class="snum">02</span>
       <h2>Drei Signale aus dem Voting</h2>
@@ -302,7 +342,7 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
   </section>
 
   <!-- 03 MAP -->
-  <section class="fade">
+  <section class="fade" id="s3">
     <div class="sechead">
       <span class="snum">03</span>
       <h2>Attraktivitaet x Naehe zum Kern</h2>
@@ -319,7 +359,7 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
   </section>
 
   <!-- 04 RANKING -->
-  <section class="fade">
+  <section class="fade" id="s4">
     <div class="sechead">
       <span class="snum">04</span>
       <h2>Rangliste</h2>
@@ -363,7 +403,7 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
   </section>
 
   <!-- 05 DETAIL CARDS -->
-  <section class="fade">
+  <section class="fade" id="s5">
     <div class="sechead">
       <span class="snum">05</span>
       <h2>Insel-Detail</h2>
@@ -373,7 +413,7 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
   </section>
 
   <!-- 06 WILD CARDS -->
-  <section class="fade">
+  <section class="fade" id="s6">
     <div class="sechead">
       <span class="snum">06</span>
       <h2>Wild Cards</h2>
@@ -384,7 +424,7 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
   </section>
 
   <!-- 07 MATRIX -->
-  <section class="fade">
+  <section class="fade" id="s7">
     <div class="sechead">
       <span class="snum">07</span>
       <h2>Einzelstimmen</h2>
@@ -397,7 +437,7 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
   </section>
 
   <!-- 08 METHOD -->
-  <section class="fade" style="border-bottom:none">
+  <section class="fade" id="s8" style="border-bottom:none">
     <div class="sechead">
       <span class="snum">08</span>
       <h2>Methodik</h2>
@@ -419,6 +459,16 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
           <li>Marktgroessen je Insel (Beispiel Nachmittagsmarkt: 115 Mio EUR) lagen den Stimmen im Voting vor, sind aber nicht Teil dieses Datensatzes und fliessen nicht in den Score ein.</li>
         </ul>
       </div>
+    </div>
+    <div class="worked">
+      <div class="worked-h">Rechenbeispiel <span>Vorschule, Linse Ausgewogen (40 / 30 / 30)</span></div>
+      <ol class="worked-steps">
+        <li><b>Wachstum.</b> Stufenpunkte schrumpfend bis stark = 0 / 1 / 2 / 3. Stimmen: 8&times; wachsend, 2&times; stark. Mittel <code>(8&times;2 + 2&times;3) / 10 = 2.2</code>, normiert <code>&divide; 3 = 0.733</code></li>
+        <li><b>Wettbewerb.</b> Vorteilspunkte viel / moderat / wenig = 1 / 2 / 3, normiert auf 0 / 0.5 / 1. Stimmen: 4&times; viel, 3&times; moderat, 3&times; wenig. Mittel <code>(4&times;0 + 3&times;0.5 + 3&times;1) / 10 = 0.450</code></li>
+        <li><b>Naehe.</b> Distanz Heim / H1 / H2 / H3 = 0 / 1 / 2 / 3, der Score nutzt die Naehe (3 minus Distanz) und normiert &divide; 3 = 1 / 0.667 / 0.333 / 0. Stimmen: 2&times; Heim, 6&times; H1, 2&times; H2. Mittel <code>(2&times;1 + 6&times;0.667 + 2&times;0.333) / 10 = 0.667</code></li>
+        <li><b>Score.</b> Gewichte der Linse 0.40 / 0.30 / 0.30. <code>100 &times; (0.40&times;0.733 + 0.30&times;0.450 + 0.30&times;0.667) = 100 &times; 0.628</code></li>
+      </ol>
+      <div class="worked-result">Score Vorschule = <b>62.8</b> / 100. Verschiebt man die Gewichte, rechnet die Linse oben live neu.</div>
     </div>
   </section>
 </main>
@@ -698,6 +748,20 @@ document.querySelectorAll(".preset").forEach(b=>{
 document.getElementById("m-n").textContent=DATA.n;
 renderCards(); renderWild(); renderMatrix();
 recompute();
+
+/* floating section nav */
+(function(){
+  var wrap=document.getElementById("navwrap"), btn=document.getElementById("navbtn"), panel=document.getElementById("navpanel");
+  if(!wrap||!btn||!panel) return;
+  function setOpen(o){ btn.setAttribute("aria-expanded", o?"true":"false"); panel.classList.toggle("open", o); }
+  btn.addEventListener("click", function(e){ e.stopPropagation(); setOpen(btn.getAttribute("aria-expanded")!=="true"); });
+  panel.addEventListener("click", function(e){ if(e.target.closest("a")) setOpen(false); });
+  document.addEventListener("click", function(e){ if(!wrap.contains(e.target)) setOpen(false); });
+  document.addEventListener("keydown", function(e){ if(e.key==="Escape") setOpen(false); });
+  function onScroll(){ var show=(window.scrollY||window.pageYOffset)>140; wrap.classList.toggle("show", show); if(!show) setOpen(false); }
+  window.addEventListener("scroll", onScroll, {passive:true});
+  onScroll();
+})();
 </script>
 </body>
 </html>
