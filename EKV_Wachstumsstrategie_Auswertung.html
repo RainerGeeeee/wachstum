@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wachstumsstrategie // Marktpriorisierung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F0EADB; --paper2:#F8F3E8; --card:#FBF8F0;
+  --navy:#0E2A47; --navy2:#14406B; --navy3:#1F578F;
+  --yellow:#F5C518; --yellowdk:#D8A90E;
+  --ink:#152330; --muted:#5E6B75; --faint:#8A949C;
+  --line:rgba(14,42,71,.18); --line2:rgba(14,42,71,.10);
+  /* category ramps: yellow = guenstige/nahe Seite, navy = ferne/zaehe Seite */
+  --p-heim:#F5C518; --p-h1:#D6AC3E; --p-h2:#5C7184; --p-h3:#0E2A47;
+  --c-wenig:#F5C518; --c-mod:#8A8868; --c-viel:#0E2A47;
+  --g-shrink:#0E2A47; --g-stag:#5C7184; --g-wach:#D6AC3E; --g-stark:#F5C518;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+.wrap{max-width:1200px;margin:0 auto;padding:0 26px}
+button,input{font-family:inherit;border-radius:0}
+::selection{background:var(--yellow);color:var(--navy)}
+a{color:var(--navy2)}
+
+/* ---------- header ---------- */
+.top{background:var(--navy);color:#fff;border-bottom:5px solid var(--yellow)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:24px;padding-bottom:24px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:16px;min-width:0}
+.glyph{width:46px;height:46px;flex:0 0 auto;border:2px solid var(--yellow);position:relative}
+.glyph:before{content:"";position:absolute;inset:7px;background:var(--yellow)}
+.glyph:after{content:"";position:absolute;left:7px;right:7px;top:50%;height:2px;background:var(--navy)}
+.eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--yellow);margin:0 0 4px}
+h1{font-weight:800;font-size:25px;letter-spacing:-.01em;margin:0;color:#fff}
+.meta{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.chip{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.04em;border:1px solid rgba(255,255,255,.28);padding:6px 10px;color:#EAF0F6;white-space:nowrap}
+.chip b{color:var(--yellow);font-weight:700}
+
+/* ---------- generic section ---------- */
+section{padding:38px 0;border-bottom:1px solid var(--line2)}
+.sechead{display:flex;align-items:baseline;gap:14px;margin:0 0 18px;flex-wrap:wrap}
+.snum{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--yellowdk);font-weight:700;letter-spacing:.1em}
+.sechead h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:0}
+.sechead p{margin:0;color:var(--muted);font-size:13.5px;max-width:60ch}
+.kick{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- controls + recommendation ---------- */
+.console{display:grid;grid-template-columns:1.05fr .95fr;gap:0;border:1.5px solid var(--navy);background:var(--card)}
+.lens{padding:24px 26px;border-right:1.5px solid var(--navy)}
+.lens h3,.reco h3{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;font-family:"JetBrains Mono",monospace}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.preset{background:transparent;border:1.5px solid var(--navy);color:var(--navy);padding:8px 13px;font-size:12.5px;font-weight:700;cursor:pointer;transition:background .12s,color .12s}
+.preset:hover{background:var(--paper2)}
+.preset.on{background:var(--navy);color:#fff}
+.slider{margin:15px 0}
+.slabel{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.slabel span:first-child{font-weight:700;font-size:13.5px}
+.slabel .val{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--navy2);font-weight:700}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:22px;background:var(--yellow);border:2px solid var(--navy);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:22px;background:var(--yellow);border:2px solid var(--navy);border-radius:0;cursor:pointer}
+input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(245,197,24,.55)}
+.lenscap{margin-top:16px;font-size:12.5px;color:var(--muted);border-left:3px solid var(--yellow);padding:4px 0 4px 12px;min-height:38px}
+.lenscap b{color:var(--ink)}
+
+.reco{padding:24px 26px;background:var(--navy);color:#fff;display:flex;flex-direction:column}
+.reco h3{color:rgba(255,255,255,.6)}
+.reco-rank{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--yellow);font-weight:700;letter-spacing:.12em}
+.reco-name{font-size:30px;font-weight:800;letter-spacing:-.015em;line-height:1.05;margin:2px 0 4px}
+.reco-score{font-family:"JetBrains Mono",monospace;font-size:14px;color:#EAF0F6}
+.reco-score b{color:var(--yellow);font-size:22px}
+.reco-chips{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0}
+.mc{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;padding:5px 9px;border:1px solid rgba(255,255,255,.3)}
+.mc i{font-style:normal;color:rgba(255,255,255,.55);font-weight:400;margin-right:5px}
+.reco-why{font-size:13px;color:#D7E0EA;line-height:1.5;margin-top:auto}
+.runners{display:flex;gap:18px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.2)}
+.runner{font-size:12.5px}
+.runner .r{font-family:"JetBrains Mono",monospace;color:var(--yellow);font-weight:700;font-size:11px}
+.runner .n{font-weight:700;display:block}
+.runner .s{font-family:"JetBrains Mono",monospace;color:#B9C6D2;font-size:11.5px}
+
+/* ---------- signals ---------- */
+.signals{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sig{border:1px solid var(--line);background:var(--paper2);padding:18px}
+.sig .t{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--yellowdk);font-weight:700;margin-bottom:8px}
+.sig p{margin:0;font-size:13.5px;line-height:1.5}
+.sig b{font-weight:700}
+
+/* ---------- map ---------- */
+.mapcard{border:1.5px solid var(--navy);background:var(--card);padding:8px 8px 0}
+#map{width:100%;height:auto;display:block}
+.maplegend{display:flex;gap:20px;flex-wrap:wrap;align-items:center;padding:12px 16px 14px;font-size:12px;color:var(--muted)}
+.maplegend .d{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px}
+.maplegend .lead{background:var(--yellow);border:1.5px solid var(--navy)}
+.maplegend .oth{background:var(--navy2)}
+
+/* ---------- catlegend ---------- */
+.catlegend{display:flex;gap:26px;flex-wrap:wrap;margin:0 0 16px;font-size:11.5px}
+.catlegend .grp b{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;font-weight:700}
+.catlegend .it{display:inline-flex;align-items:center;margin-right:12px;color:var(--ink)}
+.catlegend .sw{width:11px;height:11px;margin-right:5px;display:inline-block}
+
+/* ---------- table ---------- */
+.tbl-scroll{overflow-x:auto}
+table.rank{width:100%;border-collapse:collapse;font-size:13px}
+.rank th{text-align:left;font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 12px 9px;border-bottom:1.5px solid var(--navy);white-space:nowrap}
+.rank td{padding:12px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.rank tr.lead td{background:rgba(245,197,24,.12)}
+.rk{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:17px;color:var(--navy);width:30px}
+tr.lead .rk{color:var(--yellowdk)}
+.mname{font-weight:700;font-size:14px}
+.mdesc{color:var(--muted);font-size:11.5px;margin-top:1px}
+.scorecell{min-width:108px}
+.scoreval{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:16px;color:var(--navy)}
+.sbar{height:6px;background:var(--line);margin-top:5px;position:relative}
+.sbar i{position:absolute;left:0;top:0;bottom:0;background:var(--yellow);border-right:2px solid var(--navy)}
+.dim{min-width:132px}
+.bar{display:flex;height:14px;border:1px solid var(--line);background:var(--paper2);overflow:hidden}
+.bar span{display:block;height:100%}
+.dimfoot{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--muted);margin-top:4px}
+.dimfoot b{color:var(--ink)}
+.cons{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:13px}
+
+/* ---------- detail cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.icard{border:1px solid var(--line);background:var(--card);padding:18px 18px 16px;display:flex;flex-direction:column}
+.icard .hd{display:flex;align-items:flex-start;gap:11px;margin-bottom:4px}
+.idn{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:12px;color:#fff;background:var(--navy);padding:4px 7px;flex:0 0 auto}
+.icard h4{font-size:16px;font-weight:800;margin:0;letter-spacing:-.01em}
+.icard .desc{color:var(--muted);font-size:12px;margin:0 0 14px}
+.modes{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 14px}
+.modes .mc2{font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:700;padding:4px 7px;border:1px solid var(--line);background:var(--paper2)}
+.modes .mc2 i{font-style:normal;color:var(--muted);font-weight:400}
+.distrow{margin:9px 0}
+.distlab{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.distlab b{color:var(--ink);font-weight:700}
+.cardfoot{display:flex;gap:16px;margin-top:auto;padding-top:14px;border-top:1px solid var(--line2);font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--muted)}
+.cardfoot b{color:var(--navy);font-weight:700;font-size:13px;display:block}
+
+/* ---------- wild cards ---------- */
+.wc-intro{border-left:3px solid var(--yellow);padding:6px 0 6px 14px;margin:0 0 20px;font-size:14px;max-width:78ch}
+.wc-intro b{font-weight:700}
+.wlist{display:flex;flex-direction:column;gap:12px}
+.wrow{display:grid;grid-template-columns:64px 1fr;gap:16px;border:1px solid var(--line);background:var(--card);padding:16px 18px}
+.wrow.hot{border-color:var(--navy);border-left:5px solid var(--yellow)}
+.wcount{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:26px;color:var(--navy);line-height:1}
+.wcount small{display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:3px}
+.wrow.hot .wcount{color:var(--yellowdk)}
+.wname{font-weight:800;font-size:15px;letter-spacing:-.01em}
+.wsub{color:var(--muted);font-size:12.5px;margin:2px 0 0}
+.wreasons{margin:10px 0 0;display:flex;flex-direction:column;gap:7px}
+.wq{font-size:12.5px;color:var(--ink);border-left:2px solid var(--line);padding-left:11px;line-height:1.45}
+
+/* ---------- matrix ---------- */
+details.mx{border:1px solid var(--line);background:var(--card)}
+details.mx>summary{cursor:pointer;list-style:none;padding:14px 18px;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);display:flex;align-items:center;gap:10px}
+details.mx>summary::-webkit-details-marker{display:none}
+details.mx>summary:before{content:"+";color:var(--yellowdk);font-size:16px}
+details.mx[open]>summary:before{content:"\2013"}
+.mx-body{padding:0 18px 18px;overflow-x:auto}
+table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;font-size:10px}
+.matrix th{padding:6px 5px;color:var(--muted);font-weight:700;font-size:9px;letter-spacing:.04em;text-align:center;border-bottom:1.5px solid var(--navy);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;height:96px;vertical-align:bottom}
+.matrix th.rh{writing-mode:horizontal-tb;transform:none;text-align:left;height:auto;vertical-align:middle}
+.matrix td{padding:3px;border-bottom:1px solid var(--line2);text-align:center}
+.matrix td.rl{text-align:left;font-weight:700;color:var(--navy);padding-right:10px;white-space:nowrap}
+.cell{display:flex;gap:2px;justify-content:center}
+.pip{width:13px;height:13px;display:inline-block;border:1px solid rgba(0,0,0,.12)}
+.matrix tfoot td{font-size:9.5px;color:var(--muted);padding-top:8px}
+.wccol{text-align:left;color:var(--ink);font-weight:400;white-space:normal;min-width:150px}
+
+/* ---------- method / footer ---------- */
+.method{display:grid;grid-template-columns:1.3fr 1fr;gap:30px}
+.method h3{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-family:"JetBrains Mono",monospace;margin:0 0 12px}
+.method p{font-size:13px;line-height:1.6;color:var(--ink);margin:0 0 12px;max-width:62ch}
+.method code{font-family:"JetBrains Mono",monospace;background:var(--paper2);border:1px solid var(--line2);padding:1px 6px;font-size:12px}
+.method ul{margin:0;padding-left:18px;font-size:12.5px;line-height:1.6}
+.foot{background:var(--navy);color:#fff;padding:26px 0;margin-top:0}
+.foot .wrap{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.foot .l{font-size:12px;color:#B9C6D2;font-family:"JetBrains Mono",monospace}
+.foot .b{font-weight:800;font-size:15px}
+.foot .b span{color:var(--yellow)}
+
+/* ---------- responsive ---------- */
+@media(max-width:860px){
+  .console{grid-template-columns:1fr}
+  .lens{border-right:none;border-bottom:1.5px solid var(--navy)}
+  .signals{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr}
+  .method{grid-template-columns:1fr}
+  h1{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- print ---------- */
+@media print{
+  @page{margin:14mm}
+  body{background:#fff}
+  .top{border-bottom:4px solid #D8A90E}
+  section{padding:16px 0;border-bottom:1px solid #ccc;break-inside:avoid}
+  .console,.mapcard,.icard,.wrow,details.mx,.sig{break-inside:avoid}
+  details.mx{}
+  details.mx[open]>summary:before{content:""}
+  .chip,.preset{border-color:#888!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.fade{opacity:0;transform:translateY(8px);animation:rise .5s ease forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="glyph" aria-hidden="true"></div>
+      <div>
+        <p class="eyebrow">Wachstumsstrategie // Inselbewertung</p>
+        <h1>Marktpriorisierung der zehn Inseln</h1>
+      </div>
+    </div>
+    <div class="meta">
+      <span class="chip">Klient <b>EKV</b></span>
+      <span class="chip">Stimmen <b id="m-n">10</b></span>
+      <span class="chip">Inseln <b>10</b></span>
+      <span class="chip">Stand <b>22.&ndash;26. Juni 2026</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 01 LENS + RECOMMENDATION -->
+  <section class="fade" style="border-bottom:none;padding-bottom:14px">
+    <div class="sechead">
+      <span class="snum">01</span>
+      <h2>Strategische Linse</h2>
+      <p>Die Reihenfolge haengt davon ab, wie stark Naehe zum Kern gegenueber reiner Marktattraktivitaet zaehlt. Stellt die Gewichtung live ein, die Auswertung rechnet sofort neu.</p>
+    </div>
+    <div class="console">
+      <div class="lens">
+        <h3>Voreinstellungen</h3>
+        <div class="presets" id="presets">
+          <button class="preset" data-g="30" data-c="20" data-p="50">Kern erweitern</button>
+          <button class="preset on" data-g="40" data-c="30" data-p="30">Ausgewogen</button>
+          <button class="preset" data-g="50" data-c="50" data-p="0">Marktsog</button>
+        </div>
+        <div class="slider">
+          <div class="slabel"><span>Wachstum</span><span class="val" id="v-g">40&#37;</span></div>
+          <input type="range" id="s-g" min="0" max="100" value="40" step="5" aria-label="Gewichtung Wachstum">
+        </div>
+        <div class="slider">
+          <div class="slabel"><span>Wettbewerb (geringe Konkurrenz)</span><span class="val" id="v-c">30&#37;</span></div>
+          <input type="range" id="s-c" min="0" max="100" value="30" step="5" aria-label="Gewichtung Wettbewerb">
+        </div>
+        <div class="slider">
+          <div class="slabel"><span>Naehe zum Kern</span><span class="val" id="v-p">30&#37;</span></div>
+          <input type="range" id="s-p" min="0" max="100" value="30" step="5" aria-label="Gewichtung Naehe zum Kern">
+        </div>
+        <div class="lenscap" id="lenscap"></div>
+      </div>
+      <div class="reco">
+        <h3>Empfehlung bei dieser Linse</h3>
+        <div class="reco-rank">RANG 01</div>
+        <div class="reco-name" id="reco-name">&nbsp;</div>
+        <div class="reco-score">Score <b id="reco-score">0</b> / 100</div>
+        <div class="reco-chips" id="reco-chips"></div>
+        <div class="reco-why" id="reco-why"></div>
+        <div class="runners" id="runners"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 SIGNALS -->
+  <section class="fade">
+    <div class="sechead">
+      <span class="snum">02</span>
+      <h2>Drei Signale aus dem Voting</h2>
+      <p>Stabil unabhaengig von der Gewichtung.</p>
+    </div>
+    <div class="signals">
+      <div class="sig">
+        <div class="t">Attraktivstes Cluster</div>
+        <p><b>Lernstandsakte</b> fuehrt die reine Attraktivitaet an (wachsend bei geringem Wettbewerb). Zusammen mit der Wild Card <b>Diagnose</b> zeigt der Raum klar Richtung Lernstandsdaten und Diagnostik.</p>
+      </div>
+      <div class="sig">
+        <div class="t">Die entscheidende Stellschraube</div>
+        <p>Das Gewicht auf <b>Naehe zum Kern</b> entscheidet zwischen <b>Vorschule</b> (nah, aber stark umkaempft) und <b>Lernstandsakte / Plattformen</b> (attraktiver, aber weiter weg).</p>
+      </div>
+      <div class="sig">
+        <div class="t">Konsens vs. Rang</div>
+        <p>Am einigsten bewertet ist <b>Institutioneller Nachhilfemarkt</b> (80&#37;), landet aber zuletzt. Die Spitzenkandidaten Vorschule und Lernstandsakte sind mit 60&#37; am wenigsten einig.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 MAP -->
+  <section class="fade">
+    <div class="sechead">
+      <span class="snum">03</span>
+      <h2>Attraktivitaet x Naehe zum Kern</h2>
+      <p>Jede Insel verortet nach Marktattraktivitaet (Wachstum und geringer Wettbewerb) und Naehe zum heutigen Kerngeschaeft. Punktgroesse skaliert mit dem Score der aktuellen Linse.</p>
+    </div>
+    <div class="mapcard">
+      <svg id="map" viewBox="0 0 960 560" role="img" aria-label="Streudiagramm der Inseln nach Attraktivitaet und Naehe zum Kern"></svg>
+      <div class="maplegend">
+        <span><span class="d lead"></span>Aktuell Rang 1</span>
+        <span><span class="d oth"></span>Uebrige Inseln</span>
+        <span style="color:var(--faint)">Quadrant oben rechts = nah am Kern und attraktiv (Naher Sweet Spot)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 RANKING -->
+  <section class="fade">
+    <div class="sechead">
+      <span class="snum">04</span>
+      <h2>Rangliste</h2>
+      <p>Sortiert nach dem Score der aktuellen Linse. Balken zeigen die Verteilung aller zehn Stimmen je Kriterium.</p>
+    </div>
+    <div class="catlegend">
+      <div class="grp"><b>Naehe</b>
+        <span class="it"><span class="sw" style="background:var(--p-heim)"></span>Heim</span>
+        <span class="it"><span class="sw" style="background:var(--p-h1)"></span>H1</span>
+        <span class="it"><span class="sw" style="background:var(--p-h2)"></span>H2</span>
+        <span class="it"><span class="sw" style="background:var(--p-h3)"></span>H3</span>
+      </div>
+      <div class="grp"><b>Wettbewerb</b>
+        <span class="it"><span class="sw" style="background:var(--c-wenig)"></span>wenig</span>
+        <span class="it"><span class="sw" style="background:var(--c-mod)"></span>moderat</span>
+        <span class="it"><span class="sw" style="background:var(--c-viel)"></span>viel</span>
+      </div>
+      <div class="grp"><b>Wachstum</b>
+        <span class="it"><span class="sw" style="background:var(--g-shrink)"></span>schrumpfend</span>
+        <span class="it"><span class="sw" style="background:var(--g-stag)"></span>stagnierend</span>
+        <span class="it"><span class="sw" style="background:var(--g-wach)"></span>wachsend</span>
+        <span class="it"><span class="sw" style="background:var(--g-stark)"></span>stark</span>
+      </div>
+    </div>
+    <div class="tbl-scroll">
+      <table class="rank">
+        <thead><tr>
+          <th>#</th><th>Insel</th><th>Score</th>
+          <th>Wachstum</th><th>Wettbewerb</th><th>Naehe zum Kern</th><th>Konsens</th>
+        </tr></thead>
+        <tbody id="rankbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 05 DETAIL CARDS -->
+  <section class="fade">
+    <div class="sechead">
+      <span class="snum">05</span>
+      <h2>Insel-Detail</h2>
+      <p>Vollstaendige Stimmverteilung je Insel mit haeufigster Auspraegung und Konsens. Werte sind gewichtungsunabhaengig.</p>
+    </div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- 06 WILD CARDS -->
+  <section class="fade">
+    <div class="sechead">
+      <span class="snum">06</span>
+      <h2>Wild Cards</h2>
+      <p>Zusaetzliche Maerkte ausserhalb der Top 10, in denen einzelne Stimmen Potenzial sehen.</p>
+    </div>
+    <p class="wc-intro">Auffaellig: Drei der sieben Nennungen kreisen um <b>Diagnostik und Lernstandsdaten</b> (Diagnose, Lernstaende transparenter machen). Zusammen mit der Insel Lernstandsakte verdichtet sich daraus ein eigenes Themenfeld, das ueber einen einzelnen Markt hinausgeht.</p>
+    <div class="wlist" id="wlist"></div>
+  </section>
+
+  <!-- 07 MATRIX -->
+  <section class="fade">
+    <div class="sechead">
+      <span class="snum">07</span>
+      <h2>Einzelstimmen</h2>
+      <p>Alle zehn Stimmen, anonymisiert. Je Zelle drei Felder: Naehe, Wettbewerb, Wachstum.</p>
+    </div>
+    <details class="mx">
+      <summary>Einzelstimmen einblenden (anonymisiert)</summary>
+      <div class="mx-body" id="mxbody"></div>
+    </details>
+  </section>
+
+  <!-- 08 METHOD -->
+  <section class="fade" style="border-bottom:none">
+    <div class="sechead">
+      <span class="snum">08</span>
+      <h2>Methodik</h2>
+    </div>
+    <div class="method">
+      <div>
+        <h3>Score</h3>
+        <p>Jede Stimme bewertet jede Insel auf drei Kriterien. Die Auspraegungen werden auf 0 bis 1 normalisiert und gewichtet zum Score von 0 bis 100 verrechnet:</p>
+        <p><code>Score = wW &#183; Wachstum + wK &#183; Wettbewerbsvorteil + wN &#183; Naehe</code></p>
+        <p>Hoeher ist guenstiger fuer einen Markteintritt: starkes Wachstum, geringe Konkurrenz, Naehe zum Kern. <b>Achtung:</b> Ein Markt mit viel Wettbewerb ist nicht automatisch unattraktiv, der Score bildet nur die Eintrittsleichtigkeit ab, nicht die absolute Marktgroesse.</p>
+      </div>
+      <div>
+        <h3>Kodierung</h3>
+        <ul>
+          <li>Naehe: Heim 0, H1 1, H2 2, H3 3. Score nutzt die Naehe, also 3 minus Distanz.</li>
+          <li>Wettbewerb: viel 1, moderat 2, wenig 3 (geringe Konkurrenz zaehlt positiv).</li>
+          <li>Wachstum: schrumpfend 0, stagnierend 1, wachsend 2, stark wachsend 3.</li>
+          <li>Konsens: durchschnittlicher Anteil der haeufigsten Antwort ueber alle drei Kriterien.</li>
+          <li>Marktgroessen je Insel (Beispiel Nachmittagsmarkt: 115 Mio EUR) lagen den Stimmen im Voting vor, sind aber nicht Teil dieses Datensatzes und fliessen nicht in den Score ein.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="b">Impact is <span>Everything</span></div>
+    <div class="l">disruptive.wtf &nbsp;//&nbsp; Wachstumsstrategie-Workshop EKV &nbsp;//&nbsp; n=10</div>
+  </div>
+</footer>
+
+<script>
+const DATA = {"n":10,"islands":[{"id":1,"name":"Nachmittagsmarkt","desc":"Materialien fuer den Nachmittag, ergaenzendes Ueben","proxC":[2,7,1,0],"compC":[0,2,8],"growC":[0,1,8,1],"proxMode":"H1","compMode":"viel","growMode":"wachsend","gNorm":0.6667,"eNorm":0.1,"pNorm":0.7,"proxMean":0.9,"growMean":2,"easeMean":1.2,"agree":0.767},{"id":2,"name":"Vorschule","desc":"Fruehkindliche Bildung, Vorschulmarkt","proxC":[2,6,2,0],"compC":[3,3,4],"growC":[0,0,8,2],"proxMode":"H1","compMode":"viel","growMode":"wachsend","gNorm":0.7333,"eNorm":0.45,"pNorm":0.6667,"proxMean":1,"growMean":2.2,"easeMean":1.9,"agree":0.6},{"id":3,"name":"Berufsorientierung","desc":"Uebergang Schule zu Beruf, Orientierung","proxC":[0,1,8,1],"compC":[0,4,6],"growC":[0,1,8,1],"proxMode":"H2","compMode":"viel","growMode":"wachsend","gNorm":0.6667,"eNorm":0.2,"pNorm":0.3333,"proxMean":2,"growMean":2,"easeMean":1.4,"agree":0.733},{"id":4,"name":"Markt der Sonderbudgets","desc":"Foerder- und Sonderbudgets der oeffentlichen Hand","proxC":[3,6,0,1],"compC":[2,2,6],"growC":[0,4,6,0],"proxMode":"H1","compMode":"viel","growMode":"wachsend","gNorm":0.5333,"eNorm":0.3,"pNorm":0.7,"proxMean":0.9,"growMean":1.6,"easeMean":1.6,"agree":0.6},{"id":5,"name":"Begabungsmarkt","desc":"Begabungs- und Hochbegabtenfoerderung","proxC":[1,6,2,1],"compC":[7,1,2],"growC":[1,6,3,0],"proxMode":"H1","compMode":"wenig","growMode":"stagnierend","gNorm":0.4,"eNorm":0.75,"pNorm":0.5667,"proxMean":1.3,"growMean":1.2,"easeMean":2.5,"agree":0.633},{"id":6,"name":"Premium und Lowcost Lehrmittel","desc":"Differenzierung nach oben und unten","proxC":[7,3,0,0],"compC":[5,3,2],"growC":[1,8,1,0],"proxMode":"Heim","compMode":"wenig","growMode":"stagnierend","gNorm":0.3333,"eNorm":0.65,"pNorm":0.9,"proxMean":0.3,"growMean":1,"easeMean":2.3,"agree":0.667},{"id":7,"name":"Institutioneller Nachhilfemarkt","desc":"frueher: Nachhilfemarkt Schule","proxC":[0,0,8,2],"compC":[0,1,9],"growC":[0,1,7,2],"proxMode":"H2","compMode":"viel","growMode":"wachsend","gNorm":0.7,"eNorm":0.05,"pNorm":0.2667,"proxMean":2.2,"growMean":2.1,"easeMean":1.1,"agree":0.8},{"id":8,"name":"Geragogik","desc":"Bildung im Alter, Lernen fuer Senior:innen","proxC":[0,0,2,8],"compC":[5,4,1],"growC":[0,2,8,0],"proxMode":"H3","compMode":"wenig","growMode":"wachsend","gNorm":0.6,"eNorm":0.7,"pNorm":0.0667,"proxMean":2.8,"growMean":1.8,"easeMean":2.4,"agree":0.7},{"id":9,"name":"Premium Eltern Plattformen","desc":"frueher: Digitale Eltern Plattform","proxC":[0,0,3,7],"compC":[7,2,1],"growC":[0,2,8,0],"proxMode":"H3","compMode":"wenig","growMode":"wachsend","gNorm":0.6,"eNorm":0.8,"pNorm":0.1,"proxMean":2.7,"growMean":1.8,"easeMean":2.6,"agree":0.733},{"id":10,"name":"Lernstandsakte","desc":"Digitale Lernstandsakte, Lernverlaufsdaten","proxC":[1,3,5,1],"compC":[8,1,1],"growC":[0,4,5,1],"proxMode":"H2","compMode":"wenig","growMode":"wachsend","gNorm":0.5667,"eNorm":0.85,"pNorm":0.4667,"proxMean":1.6,"growMean":1.7,"easeMean":2.7,"agree":0.6}],"wild":[{"raw":"Diagnose - Diagnostische Werkzeuge zur Lernstandserhebung","count":3,"reasons":["Diagnostische Angebote um die Lernstände der immer heterogeneren Schülerschaft standardisiert ermitteln und verfolgen zu können wird immer wichtiger um passgenauere Lernwege für den jeweiligen Lernstand einschlagen zu können. Da gibt es auch eine große Nähe zu Punkt 22."]},{"raw":"Lehrer-Assistenzsysteme - KI-Assistenten zur Entlastung von Lehrkräften","count":2,"reasons":["Der Markt ist zwar umkämpft und etwas weiter entfernt, ein erfolgreicher Eintritt würde sich jedoch sehr positiv auf das Kerngeschäft auswirken.","Lehrkräfte entlasten"]},{"raw":"KlettAdaptiv - Ein KI-gestütztes Übungsprogramm, das jeder Schülerin und jedem Schüler Aufgaben passgenau nach Lernstand, Fehlermustern und optimalem Wiederholungszeitpunkt stellt und seinen Lernzuwachs (studienbasiert) belegt.","count":1,"reasons":["KlettAdaptiv bedient mit individueller Förderung bei wachsender Heterogenität und Lehrkräftemangel einen strukturellen Dauerbedarf. Es nutzt dabei unser schwer kopierbares Kern-Asset - Inhalte über alle Fächer und Lehrpläne, das reine Technologieanbieter nicht besitzen - und verstärkt so das Kerngeschäft, statt es zu kannibalisieren."]},{"raw":"Schulentwicklung - Beratung und Begleitung von Schulen in Veränderungsprozessen","count":1,"reasons":["Wir wissen viel über Unterricht, Unterrichtsentwicklung, Schulbedingungen, Management und digitale Organisationstools. Bringen wir das zusammen, entsteht ein starkes Beratungsangebot für Schulen bzgl. der Schulentwicklung und Co."]},{"raw":"Lernstände transparenter machen (Datengestützte Schulentwicklung > Förderdashboard) - Datenbasierte Schulentwicklung mit Förderdashboard-Prototyp","count":1,"reasons":[]},{"raw":"Disney-Pädagogik - Edutainment-Ansätze mit starken Marken und Storywelten","count":1,"reasons":["Marken- und Storywelten: bekannt aus anderen Kooperationen im Alltag (Bsp. mit Supermärkten, Bsp. Ferrero-Lernwelten https://apps.apple.com/lu/app/applaydu-spielen-und-entdecken/id1476035637?l=de-DE, Bsp. Microsoft Minecraft). Für selbständiges digitales Üben i.S. der Differenzierung und ggf. des Belohnungscharakters im Unterricht und außerhalb (Szenarien wo heute u.a. Anton-App und andere Kinder-Apps zum Einsatz kommen, z.B. auch im Restaurant wenn die Kinder das Tablet ausgehändigt bekommen)."]},{"raw":"Lernplattform (Vormittag) - Digitale Plattform für den Schul-Vormittag, Brücke zu allen Fächern","count":1,"reasons":["Verzahnung mit Nachmittagsmarkt -mit stark personalisiertem adaptivem Lernen"]}],"matrix":[{"r":"R01","cells":[["H1","viel","stark wachsend"],["H1","moderat","wachsend"],["H2","moderat","stagnierend"],["H1","moderat","stagnierend"],["H2","wenig","schrumpfend"],["H1","wenig","stagnierend"],["H2","viel","wachsend"],["H3","wenig","wachsend"],["H3","wenig","stagnierend"],["H3","wenig","stagnierend"]],"wc":"KlettAdaptiv: Ein KI-gestütztes Übungsprogramm, das jeder Schülerin und jedem Schüler Aufgaben passgenau nach Lernstand, Fehlermustern und optimalem Wiederholungszeitpunkt stellt und seinen Lernzuwachs (studienbasiert) belegt."},{"r":"R02","cells":[["H1","moderat","wachsend"],["H1","viel","wachsend"],["H2","viel","wachsend"],["Heim","viel","wachsend"],["H1","wenig","stagnierend"],["Heim","wenig","stagnierend"],["H2","viel","wachsend"],["H2","moderat","wachsend"],["H3","wenig","wachsend"],["H2","wenig","wachsend"]],"wc":"Lehrer: Assistenzsysteme - KI-Assistenten zur Entlastung von Lehrkräften"},{"r":"R03","cells":[["H1","viel","stagnierend"],["Heim","wenig","wachsend"],["H2","viel","wachsend"],["Heim","wenig","stagnierend"],["Heim","wenig","stagnierend"],["Heim","wenig","stagnierend"],["H2","viel","stagnierend"],["H3","wenig","stagnierend"],["H3","viel","stagnierend"],["H2","wenig","stagnierend"]],"wc":"Schulentwicklung: Beratung und Begleitung von Schulen in Veränderungsprozessen"},{"r":"R04","cells":[["Heim","viel","wachsend"],["Heim","wenig","stark wachsend"],["H2","viel","wachsend"],["H1","viel","stagnierend"],["H2","viel","stagnierend"],["H1","moderat","schrumpfend"],["H2","viel","wachsend"],["H3","moderat","wachsend"],["H2","moderat","wachsend"],["H1","wenig","wachsend"]],"wc":"Diagnose: Diagnostische Werkzeuge zur Lernstandserhebung"},{"r":"R05","cells":[["H1","viel","wachsend"],["H1","wenig","stark wachsend"],["H2","viel","wachsend"],["Heim","viel","wachsend"],["H1","wenig","stagnierend"],["Heim","moderat","stagnierend"],["H2","viel","wachsend"],["H2","moderat","wachsend"],["H3","wenig","wachsend"],["Heim","viel","wachsend"]],"wc":"Lehrer: Assistenzsysteme - KI-Assistenten zur Entlastung von Lehrkräften"},{"r":"R06","cells":[["H2","viel","wachsend"],["H2","moderat","wachsend"],["H2","moderat","wachsend"],["H3","wenig","stagnierend"],["H1","wenig","wachsend"],["Heim","wenig","stagnierend"],["H2","moderat","stark wachsend"],["H3","wenig","stagnierend"],["H3","wenig","wachsend"],["H2","wenig","wachsend"]],"wc":"Lernstände transparenter machen (Datengestützte Schulentwicklung > Förderdashboard): Datenbasierte Schulentwicklung mit Förderdashboard-Prototyp"},{"r":"R07","cells":[["Heim","moderat","wachsend"],["H2","moderat","wachsend"],["H3","moderat","wachsend"],["H1","viel","wachsend"],["H1","wenig","wachsend"],["Heim","wenig","stagnierend"],["H3","viel","wachsend"],["H3","moderat","wachsend"],["H2","wenig","wachsend"],["H2","wenig","stagnierend"]],"wc":"Disney: Pädagogik - Edutainment-Ansätze mit starken Marken und Storywelten"},{"r":"R08","cells":[["H1","viel","wachsend"],["H1","viel","wachsend"],["H1","moderat","wachsend"],["H1","viel","wachsend"],["H1","moderat","stagnierend"],["Heim","viel","stagnierend"],["H2","viel","stark wachsend"],["H3","wenig","wachsend"],["H3","wenig","wachsend"],["H1","wenig","wachsend"]],"wc":"Diagnose: Diagnostische Werkzeuge zur Lernstandserhebung"},{"r":"R09","cells":[["H1","viel","wachsend"],["H1","viel","wachsend"],["H2","viel","wachsend"],["H1","viel","wachsend"],["H3","viel","wachsend"],["Heim","viel","stagnierend"],["H3","viel","wachsend"],["H3","viel","wachsend"],["H2","moderat","wachsend"],["H1","moderat","stark wachsend"]],"wc":"Diagnose: Diagnostische Werkzeuge zur Lernstandserhebung"},{"r":"R10","cells":[["H1","viel","wachsend"],["H1","viel","wachsend"],["H2","viel","stark wachsend"],["H1","moderat","wachsend"],["H1","wenig","stagnierend"],["H1","moderat","wachsend"],["H2","viel","wachsend"],["H3","wenig","wachsend"],["H3","wenig","wachsend"],["H2","wenig","stagnierend"]],"wc":"Lernplattform (Vormittag): Digitale Plattform für den Schul-Vormittag, Brücke zu allen Fächern"}]};
+
+/* ----- proper German descriptions (umlauts) ----- */
+const DESC={
+1:"Materialien für den Nachmittag, ergänzendes Üben",
+2:"Frühkindliche Bildung und Vorschulmarkt",
+3:"Übergang Schule zu Beruf, Orientierung",
+4:"Förder- und Sonderbudgets der öffentlichen Hand",
+5:"Begabungs- und Hochbegabtenförderung",
+6:"Differenzierung nach oben und unten im Lehrmittel",
+7:"früher: Nachhilfemarkt Schule",
+8:"Bildung im Alter, Lernen für Senior:innen",
+9:"früher: Digitale Eltern Plattform",
+10:"Digitale Lernstandsakte und Lernverlaufsdaten"};
+
+const P=["Heim","H1","H2","H3"], C=["wenig","moderat","viel"], G=["schrumpfend","stagnierend","wachsend","stark wachsend"];
+const PCOL=["var(--p-heim)","var(--p-h1)","var(--p-h2)","var(--p-h3)"];
+const CCOL=["var(--c-wenig)","var(--c-mod)","var(--c-viel)"];
+const GCOL=["var(--g-shrink)","var(--g-stag)","var(--g-wach)","var(--g-stark)"];
+const Gshort=["schrumpf.","stagn.","wachsend","stark"];
+
+function noDash(s){
+  if(!s) return "";
+  s=s.replace(/(\d)\s*[\u2013\u2014-]\s*(\d)/g,"$1\u2013$2"); // numeric ranges stay en-dash
+  s=s.replace(/\s*[\u2014]\s*/g,", ");                       // em-dash to comma
+  s=s.replace(/\s+[\u2013]\s+/g,", ");                       // spaced en-dash to comma
+  s=s.replace(/\s+-\s+/g,", ");                              // spaced hyphen used as dash to comma
+  return s.replace(/\s+,/g,",").replace(/,\s*,/g,", ").replace(/\s{2,}/g," ").trim();
+}
+function splitWild(raw){
+  let m=raw.match(/^(.*?)\s*[\u2014\u2013-]\s+(.*)$/);
+  if(m) return [noDash(m[1]).replace(/[:,]\s*$/,""), noDash(m[2])];
+  return [noDash(raw),""];
+}
+function wcName(raw){
+  if(!raw) return "";
+  let s=String(raw).trim();
+  if(s==="-"||s==="") return "";
+  const dash=s.search(/\s-\s/);              // dash separator before a gloss
+  let head = dash>=0 ? s.slice(0,dash) : s.split(/:\s/)[0];
+  head=head.replace(/:\s+/g,"-");            // rejoin colon-split compounds (Lehrer: Assistenzsysteme -> Lehrer-Assistenzsysteme)
+  return noDash(head).trim();
+}
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* ----- weights ----- */
+let W={g:40,c:30,p:30};
+function eff(){const s=(W.g+W.c+W.p)||1;return{g:W.g/s,c:W.c/s,p:W.p/s};}
+function pct(x){return Math.round(x*100);}
+function scoreOf(isl,w){return 100*(w.g*isl.gNorm + w.c*isl.eNorm + w.p*isl.pNorm);}
+function attr(isl){return (isl.gNorm+isl.eNorm)/2;}
+function ranked(){const w=eff();return DATA.islands.map(i=>({...i,score:scoreOf(i,w)})).sort((a,b)=>b.score-a.score);}
+
+/* ----- distribution bar ----- */
+function distBar(counts,cols,total){
+  let h="";
+  counts.forEach((c,i)=>{ if(c>0) h+=`<span title="${esc(([P,C,G][cols][i]))}: ${c}" style="width:${100*c/total}%;background:${[PCOL,CCOL,GCOL][cols][i]}"></span>`; });
+  return `<div class="bar">${h}</div>`;
+}
+
+/* ----- recommendation panel ----- */
+function attrWord(a){return a>=0.6?"hohe":a>=0.45?"mittlere":"verhaltene";}
+function proxWord(p){return p>=0.6?"nah am Kern":p>=0.4?"mittlere Distanz zum Kern":"weite Distanz zum Kern";}
+function renderReco(rk){
+  const top=rk[0];
+  document.getElementById("reco-name").textContent=top.name;
+  document.getElementById("reco-score").textContent=top.score.toFixed(1);
+  document.getElementById("reco-chips").innerHTML=
+    `<span class="mc"><i>Naehe</i>${top.proxMode}</span>`+
+    `<span class="mc"><i>Wettb.</i>${top.compMode}</span>`+
+    `<span class="mc"><i>Wachst.</i>${top.growMode==="stark wachsend"?"stark wachs.":top.growMode}</span>`;
+  document.getElementById("reco-why").textContent=
+    `Bei dieser Linse fuehrt ${top.name}: ${attrWord(attr(top))} Marktattraktivitaet, ${proxWord(top.pNorm)}, Konsens ${pct(top.agree)} Prozent.`;
+  const run=rk.slice(1,3).map((r,i)=>`<div class="runner"><span class="r">0${i+2}</span><span class="n">${esc(r.name)}</span><span class="s">${r.score.toFixed(1)}</span></div>`).join("");
+  document.getElementById("runners").innerHTML=run;
+}
+
+/* ----- ranking table ----- */
+function renderTable(rk){
+  const maxS=Math.max(...rk.map(r=>r.score),1);
+  document.getElementById("rankbody").innerHTML=rk.map((r,i)=>{
+    const lead=i===0?" class='lead'":"";
+    return `<tr${lead}>
+      <td class="rk">${String(i+1).padStart(2,"0")}</td>
+      <td><div class="mname">${esc(r.name)}</div><div class="mdesc">${esc(DESC[r.id])}</div></td>
+      <td class="scorecell"><span class="scoreval">${r.score.toFixed(1)}</span><div class="sbar"><i style="width:${100*r.score/maxS}%"></i></div></td>
+      <td class="dim">${distBar(r.growC,2,DATA.n)}<div class="dimfoot">&#216; <b>${Gshort[Math.round(r.growMean)]||r.growMode}</b></div></td>
+      <td class="dim">${distBar(r.compC,1,DATA.n)}<div class="dimfoot">meist <b>${r.compMode}</b></div></td>
+      <td class="dim">${distBar(r.proxC,0,DATA.n)}<div class="dimfoot">meist <b>${r.proxMode}</b></div></td>
+      <td><span class="cons">${pct(r.agree)}&#37;</span></td>
+    </tr>`;
+  }).join("");
+}
+
+/* ----- map ----- */
+const MAP={x0:78,x1:792,yt:40,yb:486,W:960,labelSide:{1:"right",4:"left",6:"left"}};
+function px(p){return MAP.x0+p*(MAP.x1-MAP.x0);}
+function py(a){const t=Math.max(0,Math.min(1,(a-0.30)/0.45));return MAP.yb-t*(MAP.yb-MAP.yt);}
+function renderMap(rk){
+  const rankOf={}; rk.forEach((r,i)=>rankOf[r.id]=i);
+  const maxS=Math.max(...rk.map(r=>r.score),1);
+  let s="";
+  // plot frame
+  s+=`<rect x="${MAP.x0}" y="${MAP.yt}" width="${MAP.x1-MAP.x0}" height="${MAP.yb-MAP.yt}" fill="var(--paper2)" stroke="var(--line)"/>`;
+  // reference lines (mid)
+  const xm=px(0.5), ym=py(0.5);
+  s+=`<line x1="${xm}" y1="${MAP.yt}" x2="${xm}" y2="${MAP.yb}" stroke="var(--line)" stroke-dasharray="4 5"/>`;
+  s+=`<line x1="${MAP.x0}" y1="${ym}" x2="${MAP.x1}" y2="${ym}" stroke="var(--line)" stroke-dasharray="4 5"/>`;
+  // quadrant labels
+  const ql='font-family:"JetBrains Mono",monospace;font-size:11px;fill:var(--faint);letter-spacing:.08em;text-transform:uppercase';
+  s+=`<text x="${MAP.x1-10}" y="${MAP.yt+20}" text-anchor="end" style="${ql}">Naher Sweet Spot</text>`;
+  s+=`<text x="${MAP.x0+10}" y="${MAP.yt+20}" style="${ql}">Weite Wetten</text>`;
+  s+=`<text x="${MAP.x1-10}" y="${MAP.yb-12}" text-anchor="end" style="${ql}">Nah, aber zaeh</text>`;
+  s+=`<text x="${MAP.x0+10}" y="${MAP.yb-12}" style="${ql}">Randzonen</text>`;
+  // x ticks
+  const xt='font-family:"JetBrains Mono",monospace;font-size:11px;fill:var(--muted)';
+  [["0","H3"],["0.333","H2"],["0.667","H1"],["1","Heim"]].forEach(([p,l])=>{
+    const X=px(parseFloat(p));
+    s+=`<line x1="${X}" y1="${MAP.yb}" x2="${X}" y2="${MAP.yb+6}" stroke="var(--line)"/>`;
+    s+=`<text x="${X}" y="${MAP.yb+22}" text-anchor="middle" style="${xt}">${l}</text>`;
+  });
+  s+=`<text x="${(MAP.x0+MAP.x1)/2}" y="${MAP.yb+44}" text-anchor="middle" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;fill:var(--ink);font-weight:700">NAEHE ZUM KERNGESCHAEFT &#8594;</text>`;
+  // y axis label + ends
+  s+=`<text transform="translate(26 ${(MAP.yt+MAP.yb)/2}) rotate(-90)" text-anchor="middle" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;fill:var(--ink);font-weight:700">MARKTATTRAKTIVITAET &#8594;</text>`;
+  s+=`<text x="${MAP.x0-10}" y="${MAP.yt+12}" text-anchor="end" style="${xt}">hoch</text>`;
+  s+=`<text x="${MAP.x0-10}" y="${MAP.yb}" text-anchor="end" style="${xt}">gering</text>`;
+  // dots (draw lowest score first so leader on top)
+  const order=[...DATA.islands].map(i=>({...i,score:scoreOf(i,eff())})).sort((a,b)=>a.score-b.score);
+  order.forEach(d=>{
+    const X=px(d.pNorm), Y=py(attr(d)), r=6+ (d.score/maxS)*12;
+    const isLead=rankOf[d.id]===0, isTop3=rankOf[d.id]<3;
+    const fill=isLead?"var(--yellow)":"var(--navy2)";
+    const stroke=isLead?"var(--navy)":(isTop3?"var(--yellow)":"#fff");
+    s+=`<circle cx="${X}" cy="${Y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${isLead?2.5:1.5}" opacity="0.95"/>`;
+    s+=`<text x="${X}" y="${Y+4}" text-anchor="middle" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;fill:${isLead?'var(--navy)':'#fff'}">${rankOf[d.id]+1}</text>`;
+    // label
+    const side=MAP.labelSide[d.id] || (d.pNorm>=0.6?"left":"right");
+    const lx= side==="left" ? X-r-7 : X+r+7;
+    const anc= side==="left" ? "end" : "start";
+    s+=`<text x="${lx}" y="${Y+4}" text-anchor="${anc}" style="font-family:Archivo,sans-serif;font-size:12px;font-weight:600;fill:var(--ink)">${esc(shortName(d.name))}</text>`;
+  });
+  document.getElementById("map").innerHTML=s;
+}
+function shortName(n){
+  return n
+    .replace("Premium und Lowcost Lehrmittel","Premium/Lowcost")
+    .replace("Institutioneller Nachhilfemarkt","Inst. Nachhilfe")
+    .replace("Premium Eltern Plattformen","Eltern-Plattformen")
+    .replace("Markt der Sonderbudgets","Sonderbudgets");
+}
+
+/* ----- detail cards (static) ----- */
+function renderCards(){
+  document.getElementById("cards").innerHTML=DATA.islands.map(d=>{
+    const dist=(label,counts,cols,modeIdx)=>`
+      <div class="distrow">
+        <div class="distlab"><span>${label}</span><b>meist ${esc([P,C,G][cols][modeIdx])}</b></div>
+        ${distBar(counts,cols,DATA.n)}
+      </div>`;
+    return `<div class="icard">
+      <div class="hd"><span class="idn">${String(d.id).padStart(2,"0")}</span><h4>${esc(d.name)}</h4></div>
+      <p class="desc">${esc(DESC[d.id])}</p>
+      <div class="modes">
+        <span class="mc2"><i>Naehe </i>${d.proxMode}</span>
+        <span class="mc2"><i>Wettb. </i>${d.compMode}</span>
+        <span class="mc2"><i>Wachst. </i>${d.growMode==="stark wachsend"?"stark":d.growMode}</span>
+      </div>
+      ${dist("Wachstum",d.growC,2,G.indexOf(d.growMode))}
+      ${dist("Wettbewerb",d.compC,1,C.indexOf(d.compMode))}
+      ${dist("Naehe zum Kern",d.proxC,0,P.indexOf(d.proxMode))}
+      <div class="cardfoot">
+        <div><b>${pct(attr(d))}&#37;</b>Attraktivitaet</div>
+        <div><b>${pct(d.pNorm)}&#37;</b>Naehe-Index</div>
+        <div><b>${pct(d.agree)}&#37;</b>Konsens</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ----- wild cards (static) ----- */
+function renderWild(){
+  document.getElementById("wlist").innerHTML=DATA.wild.map(w=>{
+    const [name,sub]=splitWild(w.raw);
+    const hot=w.count>=2?" hot":"";
+    const reasons=w.reasons.length?`<div class="wreasons">${w.reasons.map(r=>`<div class="wq">"${esc(noDash(r))}"</div>`).join("")}</div>`:"";
+    return `<div class="wrow${hot}">
+      <div class="wcount">${w.count}&#215;<small>Nennung${w.count>1?"en":""}</small></div>
+      <div>
+        <div class="wname">${esc(name)}</div>
+        ${sub?`<p class="wsub">${esc(sub)}</p>`:""}
+        ${reasons}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+/* ----- matrix (static) ----- */
+function pip(val,cols){const arr=[P,C,G][cols];const i=arr.indexOf(val);const col=[PCOL,CCOL,GCOL][cols][i];return `<span class="pip" title="${esc(val)}" style="background:${col}"></span>`;}
+function renderMatrix(){
+  const head=`<tr><th class="rh">Stimme</th>${DATA.islands.map(i=>`<th>${esc(shortName(i.name))}</th>`).join("")}<th class="rh">Wild Card</th></tr>`;
+  const body=DATA.matrix.map(row=>{
+    const cells=row.cells.map(c=>`<td><div class="cell">${pip(c[0],0)}${pip(c[1],1)}${pip(c[2],2)}</div></td>`).join("");
+    const wn=wcName(row.wc); const wfull=esc(noDash(row.wc));
+    const wdisp=wn.length>30?wn.slice(0,28).trim()+"\u2026":wn;
+    return `<tr><td class="rl">${row.r}</td>${cells}<td class="wccol" title="${wfull}">${esc(wdisp)}</td></tr>`;
+  }).join("");
+  const foot=`<tfoot><tr><td colspan="${DATA.islands.length+2}">Reihenfolge je Zelle: Naehe / Wettbewerb / Wachstum. Farben wie in der Legende oben.</td></tr></tfoot>`;
+  document.getElementById("mxbody").innerHTML=`<table class="matrix"><thead>${head}</thead><tbody>${body}</tbody>${foot}</table>`;
+}
+
+/* ----- lens caption ----- */
+function caption(){
+  const e=eff(), cap=document.getElementById("lenscap");
+  let lead="";
+  const active=document.querySelector(".preset.on");
+  if(active){
+    const t=active.textContent;
+    if(t==="Kern erweitern") lead="<b>Kern erweitern.</b> Naehe dominiert: bevorzugt nahe, schnell wirksame Maerkte mit geringem Risiko.";
+    else if(t==="Ausgewogen") lead="<b>Ausgewogen.</b> Wachstum fuehrt leicht, Naehe und Wettbewerb gleich gewichtet. Solider Ausgangspunkt.";
+    else lead="<b>Marktsog.</b> Reine Attraktivitaet, Naehe ignoriert: belohnt das groesste Marktpotenzial unabhaengig von der Distanz.";
+  } else {
+    lead="<b>Eigene Gewichtung.</b> "+`Wachstum ${pct(e.g)}, Wettbewerb ${pct(e.c)}, Naehe ${pct(e.p)} Prozent.`;
+  }
+  cap.innerHTML=lead;
+}
+
+/* ----- wiring ----- */
+function syncSliders(){
+  document.getElementById("s-g").value=W.g; document.getElementById("v-g").textContent=W.g+"\u0025";
+  document.getElementById("s-c").value=W.c; document.getElementById("v-c").textContent=W.c+"\u0025";
+  document.getElementById("s-p").value=W.p; document.getElementById("v-p").textContent=W.p+"\u0025";
+}
+function recompute(){
+  syncSliders(); caption();
+  const rk=ranked();
+  renderReco(rk); renderTable(rk); renderMap(rk);
+}
+function matchPreset(){
+  let matched=null;
+  document.querySelectorAll(".preset").forEach(b=>{
+    if(+b.dataset.g===W.g && +b.dataset.c===W.c && +b.dataset.p===W.p) matched=b;
+  });
+  document.querySelectorAll(".preset").forEach(b=>b.classList.toggle("on", b===matched));
+}
+document.querySelectorAll(".preset").forEach(b=>{
+  b.addEventListener("click",()=>{
+    W={g:+b.dataset.g,c:+b.dataset.c,p:+b.dataset.p};
+    document.querySelectorAll(".preset").forEach(x=>x.classList.toggle("on",x===b));
+    recompute();
+  });
+});
+[["s-g","g","v-g"],["s-c","c","v-c"],["s-p","p","v-p"]].forEach(([id,key,vid])=>{
+  document.getElementById(id).addEventListener("input",e=>{
+    W[key]=+e.target.value; document.getElementById(vid).textContent=W[key]+"\u0025";
+    matchPreset(); caption();
+    const rk=ranked(); renderReco(rk); renderTable(rk); renderMap(rk);
+  });
+});
+
+/* init */
+document.getElementById("m-n").textContent=DATA.n;
+renderCards(); renderWild(); renderMatrix();
+recompute();
+</script>
+</body>
+</html>
