@@ -223,6 +223,30 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
 .navpanel a:hover{background:var(--grey)}
 .navpanel a i{font-family:"JetBrains Mono",monospace;font-style:normal;font-size:11px;color:var(--faint);font-weight:700;width:18px;flex:0 0 auto}
 
+/* ---------- mode toggle + raw view ---------- */
+.modetog{display:inline-flex;margin-top:16px;border:1px solid var(--hair);background:#fff}
+.mt{background:#fff;border:none;padding:7px 16px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:background .15s,color .15s}
+.mt+.mt{border-left:1px solid var(--hair)}
+.mt:hover{background:var(--grey)}
+.mt.on{background:var(--ink);color:#fff}
+.mt.on:hover{background:var(--ink)}
+.rawnote{display:none}
+body.mode-raw .rawnote{display:block}
+/* hide the scoring layer in raw mode */
+body.mode-raw #s1,
+body.mode-raw #s2,
+body.mode-raw #s3,
+body.mode-raw .exbox,
+body.mode-raw .col-score,
+body.mode-raw .scorecell,
+body.mode-raw .snum,
+body.mode-raw .cardfoot div:nth-child(1),
+body.mode-raw .cardfoot div:nth-child(2),
+body.mode-raw .method>div:first-child,
+body.mode-raw #navpanel a[data-an],
+body.mode-raw #navpanel a i{display:none}
+body.mode-raw .method{grid-template-columns:1fr}
+
 /* ---------- responsive ---------- */
 @media(max-width:860px){
   .console{grid-template-columns:1fr}
@@ -259,6 +283,10 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
         <p class="wordmark">Ernst Klett Verlag</p>
         <p class="eyebrow">Wachstumsstrategie // Marktpriorisierung</p>
         <h1>Bewertung der zehn Wachstumsinseln</h1>
+        <div class="modetog" role="group" aria-label="Ansicht">
+          <button class="mt on" data-mode="analyse" aria-pressed="true">Analyse</button>
+          <button class="mt" data-mode="raw" aria-pressed="false">Roh</button>
+        </div>
       </div>
     </div>
     <div class="meta">
@@ -275,9 +303,9 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
     <span></span><span></span><span></span>
   </button>
   <nav class="navpanel" id="navpanel" aria-label="Abschnitte">
-    <a href="#s1"><i>01</i>Strategische Linse</a>
-    <a href="#s2"><i>02</i>Drei Signale</a>
-    <a href="#s3"><i>03</i>Attraktivitaet x Naehe</a>
+    <a href="#s1" data-an><i>01</i>Strategische Linse</a>
+    <a href="#s2" data-an><i>02</i>Drei Signale</a>
+    <a href="#s3" data-an><i>03</i>Attraktivitaet x Naehe</a>
     <a href="#s4"><i>04</i>Rangliste</a>
     <a href="#s5"><i>05</i>Insel-Detail</a>
     <a href="#s6"><i>06</i>Wild Cards</a>
@@ -405,7 +433,7 @@ table.matrix{border-collapse:collapse;font-family:"JetBrains Mono",monospace;fon
     <div class="tbl-scroll">
       <table class="rank">
         <thead><tr>
-          <th>#</th><th>Insel</th><th>Score</th>
+          <th>#</th><th>Insel</th><th class="col-score">Score</th>
           <th>Wachstum</th><th>Wettbewerb</th><th>Naehe zum Kern</th><th>Konsens</th>
         </tr></thead>
         <tbody id="rankbody"></tbody>
@@ -543,6 +571,7 @@ const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"
 
 /* ----- weights ----- */
 let W={g:40,c:30,p:30};
+let MODE="analyse";
 function eff(){const s=(W.g+W.c+W.p)||1;return{g:W.g/s,c:W.c/s,p:W.p/s};}
 function pct(x){return Math.round(x*100);}
 function scoreOf(isl,w){return 100*(w.g*isl.gNorm + w.c*isl.eNorm + w.p*isl.pNorm);}
@@ -577,9 +606,11 @@ function renderReco(rk){
 
 /* ----- ranking table ----- */
 function renderTable(rk){
-  const maxS=Math.max(...rk.map(r=>r.score),1);
-  document.getElementById("rankbody").innerHTML=rk.map((r,i)=>{
-    const lead=i===0?" class='lead'":"";
+  const raw = (MODE==="raw");
+  const list = raw ? DATA.islands.map(i=>({...i,score:scoreOf(i,eff())})) : rk;
+  const maxS=Math.max(...list.map(r=>r.score),1);
+  document.getElementById("rankbody").innerHTML=list.map((r,i)=>{
+    const lead=(!raw && i===0)?" class='lead'":"";
     return `<tr${lead}>
       <td class="rk">${String(i+1).padStart(2,"0")}</td>
       <td><div class="mname">${esc(r.name)}</div><div class="mdesc">${esc(DESC[r.id])}</div></td>
@@ -788,6 +819,27 @@ document.querySelectorAll(".preset").forEach(b=>{
     matchPreset(); caption();
     const rk=ranked(); renderReco(rk); renderTable(rk); renderMap(rk); renderExample(rk);
   });
+});
+
+/* ----- view mode (Analyse / Roh) ----- */
+function applyMode(m){
+  MODE=(m==="raw")?"raw":"analyse";
+  document.body.classList.toggle("mode-raw", MODE==="raw");
+  document.querySelectorAll(".mt").forEach(function(b){
+    var on=b.dataset.mode===MODE; b.classList.toggle("on",on); b.setAttribute("aria-pressed", on?"true":"false");
+  });
+  var raw=(MODE==="raw");
+  var h=document.querySelector("#s4 h2"), p=document.querySelector("#s4 .sechead p");
+  if(h) h.textContent = raw ? "Stimmverteilung je Insel" : "Rangliste";
+  if(p) p.textContent = raw
+    ? "Wie sich die zehn Stimmen je Insel und Kriterium verteilen. Reihenfolge wie im Voting, ohne Bewertung."
+    : "Sortiert nach dem Score der aktuellen Linse. Balken zeigen die Verteilung aller zehn Stimmen je Kriterium.";
+  var n4=document.querySelector('#navpanel a[href="#s4"]');
+  if(n4) n4.innerHTML = '<i>04</i>'+(raw?"Stimmverteilung":"Rangliste");
+  recompute();
+}
+document.querySelectorAll(".mt").forEach(function(b){
+  b.addEventListener("click",function(){ applyMode(b.dataset.mode); });
 });
 
 /* init */
