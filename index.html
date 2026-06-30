@@ -267,7 +267,8 @@ body.mode-raw .method{grid-template-columns:1fr}
 #sk{display:none}
 body.mode-korridor main>section:not(#sk){display:none}
 body.mode-korridor #sk{display:block;opacity:1;transform:none;animation:none}
-body.mode-korridor #navwrap{display:none!important}
+body.mode-korridor #navlinks{display:none}
+body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
 .ksub{margin:46px 0 0;padding-top:30px;border-top:1px solid var(--hair)}
 .ksub h3{font-size:23px;font-weight:600;letter-spacing:-.02em;margin:0 0 8px}
 .ksub p{font-size:14px;line-height:1.6;color:var(--muted);max-width:760px;margin:0}
@@ -334,16 +335,14 @@ body.mode-korridor #navwrap{display:none!important}
 .kbestrow{display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px;margin:0 0 14px}
 .kbest{appearance:none;border:1px solid var(--ink);background:var(--ink);color:#fff;font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:700;letter-spacing:.04em;padding:11px 18px;cursor:pointer;transition:opacity .12s;white-space:nowrap}
 .kbest:hover{opacity:.85} .kbest:disabled{opacity:.55;cursor:default}
-.kaibox{border:1px solid var(--hair);background:#fff;font-size:12px;max-width:660px;flex:1 1 320px}
-.kaibox summary{cursor:pointer;padding:11px 16px;font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);list-style:none}
-.kaibox summary::-webkit-details-marker{display:none}
-.kaibox summary:before{content:"+ ";color:var(--faint)}
-.kaibox[open] summary:before{content:"\2212 "}
-.kaigrid{display:grid;grid-template-columns:150px 1fr 1fr;gap:10px;padding:0 16px 12px}
-.kaigrid label{display:flex;flex-direction:column;gap:5px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
-.kaigrid select,.kaigrid input{font-family:"JetBrains Mono",monospace;font-size:12.5px;border:1px solid var(--hair);background:#fff;padding:8px 10px;color:var(--ink);text-transform:none;letter-spacing:0;font-weight:400}
-.kaigrid select:focus,.kaigrid input:focus{outline:none;border-color:var(--ink)}
-.kainote{padding:0 16px 12px;font-size:11px;line-height:1.5;color:var(--faint);margin:0}
+.kbest-hint{font-size:11.5px;color:var(--faint);line-height:1.5;max-width:360px;flex:1 1 280px}
+/* global settings panel (under burger) */
+.navset{border-top:1px solid var(--hair);margin-top:6px;padding:12px 12px 10px}
+.navset-h{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.navset-row{display:flex;flex-direction:column;gap:4px;margin-bottom:9px;font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);font-weight:700}
+.navset-row select,.navset-row input{font-family:"JetBrains Mono",monospace;font-size:12px;border:1px solid var(--hair);background:#fff;padding:7px 9px;color:var(--ink);text-transform:none;letter-spacing:0;font-weight:400;width:100%;box-sizing:border-box}
+.navset-row select:focus,.navset-row input:focus{outline:none;border-color:var(--ink)}
+.navset-note{font-size:10.5px;line-height:1.45;color:var(--faint);margin:2px 0 0}
 .kbest-note{border-left:3px solid var(--pos);background:var(--grey);padding:12px 16px;font-size:13px;line-height:1.55;color:var(--ink2);margin:0 0 16px}
 .kbest-note b{color:var(--ink)} .kbest-note .kerr{color:var(--yellow);font-size:11px}
 
@@ -356,7 +355,7 @@ body.mode-korridor #navwrap{display:none!important}
 .k-bub{font-family:Archivo,sans-serif;font-weight:700;fill:#fff;text-anchor:middle}
 .k-bubv{font-family:"JetBrains Mono",monospace;fill:#fff;text-anchor:middle}
 
-@media(max-width:720px){ .kmarkets{grid-template-columns:1fr} .kctrls{gap:10px} .kstep{flex:1 1 100%} .kreset{width:100%} .kaigrid{grid-template-columns:1fr} .ksubtabs{width:100%} .kst{flex:1 1 auto;text-align:center;padding:11px 6px} }
+@media(max-width:720px){ .kmarkets{grid-template-columns:1fr} .kctrls{gap:10px} .kstep{flex:1 1 100%} .kreset{width:100%} .ksubtabs{width:100%} .kst{flex:1 1 auto;text-align:center;padding:11px 6px} }
 
 /* ---------- responsive ---------- */
 @media(max-width:860px){
@@ -414,15 +413,24 @@ body.mode-korridor #navwrap{display:none!important}
   <button class="navbtn" id="navbtn" aria-label="Abschnitte" aria-expanded="false" aria-controls="navpanel">
     <span></span><span></span><span></span>
   </button>
-  <nav class="navpanel" id="navpanel" aria-label="Abschnitte">
-    <a href="#s1" data-an><i>01</i>Strategische Linse</a>
-    <a href="#s2" data-an><i>02</i>Drei Signale</a>
-    <a href="#s3" data-an><i>03</i>Attraktivitaet x Naehe</a>
-    <a href="#s4"><i>04</i>Rangliste</a>
-    <a href="#s5"><i>05</i>Insel-Detail</a>
-    <a href="#s6"><i>06</i>Wild Cards</a>
-    <a href="#s7"><i>07</i>Einzelstimmen</a>
-    <a href="#s8"><i>08</i>Methodik</a>
+  <nav class="navpanel" id="navpanel" aria-label="Menue">
+    <div id="navlinks">
+      <a href="#s1" data-an><i>01</i>Strategische Linse</a>
+      <a href="#s2" data-an><i>02</i>Drei Signale</a>
+      <a href="#s3" data-an><i>03</i>Attraktivitaet x Naehe</a>
+      <a href="#s4"><i>04</i>Rangliste</a>
+      <a href="#s5"><i>05</i>Insel-Detail</a>
+      <a href="#s6"><i>06</i>Wild Cards</a>
+      <a href="#s7"><i>07</i>Einzelstimmen</a>
+      <a href="#s8"><i>08</i>Methodik</a>
+    </div>
+    <div id="navset">
+      <div class="navset-h">KI-Strategie (optional)</div>
+      <label class="navset-row">Anbieter<select id="kAIprov"><option value="anthropic">Claude (Anthropic)</option><option value="openai">ChatGPT (OpenAI)</option></select></label>
+      <label class="navset-row">API-Key<input id="kAIkey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false"></label>
+      <label class="navset-row">Modell<input id="kAImodel" type="text" value="claude-3-5-sonnet-20241022" spellcheck="false"></label>
+      <p class="navset-note">Wird nur aus deinem Browser direkt an den Anbieter gesendet und nirgends gespeichert. Ohne Key waehlt der eingebaute Optimierer.</p>
+    </div>
   </nav>
 </div>
 
@@ -681,14 +689,7 @@ body.mode-korridor #navwrap{display:none!important}
     <div class="kmkt-h">Maerkte auswaehlen <span>aus der Rangliste, nach Umsatzpotenzial. Startjahr je Markt einstellbar.</span></div>
     <div class="kbestrow">
       <button class="kbest" id="kBest">&#9733;&nbsp; Beste Strategie zeigen</button>
-      <details class="kaibox"><summary>KI-Einstellungen (optional)</summary>
-        <div class="kaigrid">
-          <label>Anbieter<select id="kAIprov"><option value="anthropic">Claude (Anthropic)</option><option value="openai">ChatGPT (OpenAI)</option></select></label>
-          <label>API-Key<input id="kAIkey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false"></label>
-          <label>Modell<input id="kAImodel" type="text" value="claude-3-5-sonnet-20241022" spellcheck="false"></label>
-        </div>
-        <p class="kainote">Der Key wird nur aus deinem Browser direkt an den Anbieter gesendet und nirgends gespeichert. Ohne Key waehlt ein eingebauter Optimierer die Maerkte.</p>
-      </details>
+      <span class="kbest-hint">Waehlt automatisch Maerkte, die den Bedarf decken. Ohne KI-Key uebernimmt der eingebaute Optimierer; einen Key fuer Claude oder ChatGPT hinterlegst du im Menue oben rechts.</span>
     </div>
     <div class="kbest-note" id="kBestNote" hidden></div>
     <div class="kmarkets" id="kMarkets"></div>
