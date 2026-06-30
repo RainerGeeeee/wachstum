@@ -342,6 +342,7 @@ body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
 .kmk-a .kpot input{width:56px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:12.5px;border:1px solid var(--hair);background:#fff;padding:5px 6px;color:var(--ink);font-weight:600}
 .kmk-a .kpot input:focus{outline:none;border-color:var(--ink)}
 .kmk-a .kunit{margin-left:5px;color:var(--faint);font-weight:700}
+.rm-assume{font-size:10.5px;color:var(--muted);margin-top:5px;font-style:italic;line-height:1.4}
 .kbest-hint{font-size:11.5px;color:var(--faint);line-height:1.5;max-width:360px;flex:1 1 280px}
 /* global settings panel (under burger) */
 .navset{border-top:1px solid var(--hair);margin-top:6px;padding:12px 12px 10px}
@@ -737,8 +738,8 @@ body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
     <div class="kmkt-h" id="kMktH">Maerkte auswaehlen <span>aus der Rangliste, nach Umsatzpotenzial. Startjahr je Markt einstellbar.</span></div>
     <div class="kbestrow">
       <button class="kbest" id="kBest">&#9733;&nbsp; Beste Strategie mit aktuellen Maerkten</button>
-      <button class="kbest kbest2" id="kBestAdapt">&#10022;&nbsp; Adaptierte Strategie finden</button>
-      <span class="kbest-hint">Links: waehlt aus den aktuellen Maerkten. Rechts: die KI sucht frei nach Maerkten und Groessen, die den Bedarfsraum fuellen. Beide brauchen einen KI-Key (Menue oben rechts).</span>
+      <button class="kbest kbest2" id="kBestAdapt">&#10022;&nbsp; Stabile Strategie finden</button>
+      <span class="kbest-hint">Links: waehlt aus unseren Maerkten in voller Groesse und darf ueberschiessen. Rechts: die KI stellt aus unseren Maerkten den besten Mix zusammen und dosiert jedes Feld per Anteil, um im Bedarfsraum zu bleiben. Beide brauchen einen KI-Key (Menue oben rechts).</span>
     </div>
     <div class="kbest-note" id="kBestNote" hidden></div>
     <div class="kmarkets" id="kMarkets"></div>
@@ -1150,7 +1151,9 @@ function kMAt(id,t,s){var x=t-((s||1)-1); if(x<=0)return 0; var lo=Math.floor(x)
 function kStackAt(t){var sum=0,sc=SC();sc.sel.forEach(function(id){sum+=kMAt(id,t,sc.start[id]||1);});return sum;}
 function rampFromJ5(j5){j5=(+j5)||0;return [0.2,0.4,0.6,0.8,1].map(function(f){return f*j5;});}
 function kRampAt(ramp,t,s){var x=t-((s||1)-1); if(x<=0)return 0; if(x>=5)return ramp[4]; var lo=Math.floor(x),hi=Math.ceil(x); var vlo=lo<1?0:ramp[lo-1], vhi=ramp[hi-1]; if(lo===hi)return ramp[lo-1]; return vlo+(vhi-vlo)*(x-lo);}
-function kGot(t){var sc=SC(); if(sc.mode==='adaptiert'&&sc.adapt){var s=0;sc.adapt.markets.forEach(function(m){s+=kRampAt(rampFromJ5(m.j5),t,m.start||1);});return s;} return kStackAt(t);}
+function kEffRamp(m){ var M=MKT[m.id]; if(!M)return [0,0,0,0,0]; var p=(m.pct!=null?m.pct:100)/100; return M.rampN.map(function(v){return v*p;}); }
+function kEff5(m){ var M=MKT[m.id]; return M?M.rampN[4]*((m.pct!=null?m.pct:100)/100):0; }
+function kGot(t){var sc=SC(); if(sc.mode==='adaptiert'&&sc.adapt){var s=0;sc.adapt.markets.forEach(function(m){s+=kRampAt(kEffRamp(m),t,m.start||1);});return s;} return kStackAt(t);}
 function kNeed(t){return Math.max(0,kLevel(t,SC().g)-kUAt(t));}
 function kCross(){var u=1+kU/100,k=1+kK/100; if(k>u)return Math.log(KU0/KK0)/Math.log(k/u); return null;}
 function kTop5(){var w=eff();return kOrder.slice().sort(function(a,b){return scoreOf(islById(b),w)-scoreOf(islById(a),w);}).slice(0,5);}
@@ -1201,7 +1204,7 @@ function renderChart2(){
   var pb='M'+kx(ts[0])+','+ky2(kUAt(ts[0])); ts.forEach(function(tt){pb+=' L'+kx(tt)+','+ky2(kUAt(tt));});
   for(i=ts.length-1;i>=0;i--)pb+=' L'+kx(ts[i])+','+ky2(kKAt(ts[i])); pb+=' Z';
   s+='<path d="'+pb+'" fill="var(--pos)" opacity="0.07"/>';
-  var items = (sc.mode==='adaptiert'&&sc.adapt) ? sc.adapt.markets.map(function(m,i){return {ramp:rampFromJ5(m.j5),start:m.start||1,color:ADAPT_COLORS[i%ADAPT_COLORS.length],j5:(+m.j5)||0,name:m.name};}) : kOrder.filter(function(id){return sc.sel.has(id);}).map(function(id){return {ramp:MKT[id].rampN,start:sc.start[id]||1,color:kCol[id],j5:MKT[id].rampN[4],name:islName(id)};});
+  var items = (sc.mode==='adaptiert'&&sc.adapt) ? sc.adapt.markets.map(function(m,i){return {ramp:kEffRamp(m),start:m.start||1,color:ADAPT_COLORS[i%ADAPT_COLORS.length],j5:kEff5(m),name:islName(m.id)};}) : kOrder.filter(function(id){return sc.sel.has(id);}).map(function(id){return {ramp:MKT[id].rampN,start:sc.start[id]||1,color:kCol[id],j5:MKT[id].rampN[4],name:islName(id)};});
   if(sc.view!=="bubbles"){
     var cum=ts.map(function(){return 0;});
     items.forEach(function(it){
@@ -1258,7 +1261,7 @@ function renderKipp(){
 }
 function renderCover(){
   var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), got=kGot(ref), el=document.getElementById('kCover'), sc=SC(), v=kView();
-  if(!v.list.length){ el.innerHTML=(sc.mode==='adaptiert'?'Noch keine adaptierte Strategie. ':'Noch keine Maerkte gewaehlt. ')+'Bedarf am Kipp-Punkt (Jahr '+fmtDE(ref,1)+'): <b>'+fmtDE(need,1)+' Mio</b>.'; return; }
+  if(!v.list.length){ el.innerHTML=(sc.mode==='adaptiert'?'Noch keine stabile Strategie. ':'Noch keine Maerkte gewaehlt. ')+'Bedarf am Kipp-Punkt (Jahr '+fmtDE(ref,1)+'): <b>'+fmtDE(need,1)+' Mio</b>.'; return; }
   if(need<=0){ el.innerHTML='Kein zusaetzliches Wachstum noetig. Gewaehlt: <b class="pos">'+fmtDE(got,1)+' Mio</b>.'; return; }
   var pctc=Math.round(100*got/need), tag;
   if(pctc>115) tag='<b style="color:var(--warn)">'+pctc+'&#37; ueber dem Bedarf</b>';
@@ -1276,10 +1279,10 @@ function renderScenMeta(){
 function renderSelector(){
   var mk=document.getElementById('kMarkets'); if(!mk)return; var sc=SC(), h=document.getElementById('kMktH');
   if(sc.mode==='adaptiert'){
-    if(h)h.innerHTML='Gefundene Maerkte <span>von der KI fuer den Bedarfsraum, Groesse und Startjahr editierbar.</span>';
+    if(h)h.innerHTML='Stabile Strategie <span>aus unseren Maerkten, Anteil und Startjahr editierbar.</span>';
     if(!sc.adapt){ mk.innerHTML=''; return; }
-    mk.innerHTML=sc.adapt.markets.map(function(m,i){var col=ADAPT_COLORS[i%ADAPT_COLORS.length];
-      return '<div class="kmk kmk-a on" data-ai="'+i+'" style="--mkc:'+col+'"><span class="box"></span><span class="knm">'+esc(m.name)+'</span><span class="krt"><span class="kpot">Groesse <input type="number" min="0" step="1" value="'+(''+(m.j5||0))+'" data-aj5="'+i+'"><span class="kunit">Mio</span></span><span class="kstart">Start <input type="number" min="1" max="12" value="'+(m.start||1)+'" data-asid="'+i+'"></span></span></div>';
+    mk.innerHTML=sc.adapt.markets.map(function(m,i){var col=ADAPT_COLORS[i%ADAPT_COLORS.length], id=m.id, full=(MKT[id]?MKT[id].rampN[4]:0), pct=(m.pct!=null?m.pct:100), ef=Math.round(full*pct/100*10)/10;
+      return '<div class="kmk kmk-a on" data-ai="'+i+'" style="--mkc:'+col+'"><span class="box"></span><span class="knm">'+esc(islName(id))+'</span><span class="krt"><span class="kpot">'+fmtDE(full,1)+' Mio &times; <input type="number" min="0" max="100" step="5" value="'+pct+'" data-apct="'+i+'"><span class="kunit">&#37; = '+fmtDE(ef,1)+' Mio</span></span><span class="kstart">Start <input type="number" min="1" max="12" value="'+(m.start||1)+'" data-asid="'+i+'"></span></span></div>';
     }).join('');
     return;
   }
@@ -1315,7 +1318,7 @@ function kView(){
   if(sc.mode==='adaptiert'){
     var a=sc.adapt;
     return { custom:true, ready:!!a, vision:a&&a.vision, hhgs:a&&a.hhgs, whyNot:a&&a.whyNot, rationale:a&&a.rationale, src:a&&a.src, visY:(a&&a.visY)||kVisionYear(),
-      list:(a?a.markets:[]).map(function(m,i){return {key:'a'+i, name:m.name, j5:m.j5, start:m.start||1, color:ADAPT_COLORS[i%ADAPT_COLORS.length], vonZu:m.vonZu, why:m.why, startNow:m.startNow, by2031:m.by2031, by2036:m.by2036, groesseBasis:m.groesseBasis, timingGrund:m.timingGrund, ramp:rampFromJ5(m.j5)};}) };
+      list:(a?a.markets:[]).map(function(m,i){var M=MKT[m.id]||{rampN:[0,0,0,0,0]},full=M.rampN[4]||0,pct=(m.pct!=null?m.pct:100);return {key:'a'+i, id:m.id, name:islName(m.id), full:full, pct:pct, j5:kEff5(m), start:m.start||1, color:ADAPT_COLORS[i%ADAPT_COLORS.length], vonZu:m.vonZu, why:m.why, startNow:m.startNow, by2031:m.by2031, by2036:m.by2036, pctGrund:m.pctGrund, timingGrund:m.timingGrund, ramp:kEffRamp(m)};}) };
   }
   var st=sc.strat||kBuildStrat();
   var ids=kOrder.filter(function(id){return sc.sel.has(id);});
@@ -1381,22 +1384,24 @@ function renderExplain(){
   var h='';
   var lead=(v.src?('<b>'+esc(v.src)+'</b> '):'')+esc(v.rationale||'');
   if(lead.trim())h+='<p class="kx-lead">'+lead+'</p>';
-  h+='<div class="kx-h">'+(v.custom?'Gefundene Maerkte und warum':'Warum diese Maerkte')+'</div>';
+  h+='<div class="kx-h">'+(v.custom?'Maerkte, Anteile und warum':'Warum diese Maerkte')+'</div>';
   v.list.forEach(function(it){
-    h+='<div class="kx-m"><span class="kx-dot" style="background:'+it.color+'"></span><div><b>'+esc(it.name)+'</b> <span class="kx-start">'+(v.custom?'ca. '+fmtDE(it.j5,1)+' Mio &middot; ':'')+'Start Jahr '+it.start+'</span>'+(it.why?'<div>'+esc(it.why)+'</div>':'')+((v.custom&&(it.groesseBasis||it.timingGrund))?'<div class="kx-t">'+(it.groesseBasis?'Groesse: '+esc(it.groesseBasis):'')+(it.groesseBasis&&it.timingGrund?' &middot; ':'')+(it.timingGrund?'Timing: '+esc(it.timingGrund):'')+'</div>':'')+(it.startNow?'<div class="kx-t">Erster Schritt: '+esc(it.startNow)+'</div>':'')+'</div></div>'; });
+    var meta=v.custom?('Anteil '+it.pct+'&#37; von '+fmtDE(it.full,1)+' Mio = '+fmtDE(it.j5,1)+' Mio &middot; Start Jahr '+it.start):('Start Jahr '+it.start);
+    var rea=(v.custom&&(it.pctGrund||it.timingGrund))?('<div class="kx-t">'+(it.pctGrund?'Anteil: '+esc(it.pctGrund):'')+(it.pctGrund&&it.timingGrund?' &middot; ':'')+(it.timingGrund?'Timing: '+esc(it.timingGrund):'')+'</div>'):'';
+    h+='<div class="kx-m"><span class="kx-dot" style="background:'+it.color+'"></span><div><b>'+esc(it.name)+'</b> <span class="kx-start">'+meta+'</span>'+(it.why?'<div>'+esc(it.why)+'</div>':'')+rea+(it.startNow?'<div class="kx-t">Erster Schritt: '+esc(it.startNow)+'</div>':'')+'</div></div>'; });
   if(v.whyNot)h+='<div class="kx-h">'+(v.custom?'Annahmen und Hinweise':'Warum nicht die anderen')+'</div><p class="kx-wn">'+esc(v.whyNot)+'</p>';
   note.innerHTML=h; note.hidden=false;
 }
 function goalCard(b){ if(!b||(!b.ziel&&!b.do))return '<span class="rm-none">&middot;</span>'; return '<div class="rm-goalcard"><div class="rm-goalv">'+esc(b.ziel||'')+'</div>'+(b.do?'<div class="rm-goaldo"><i>Massnahme</i>'+esc(b.do)+'</div>':'')+'</div>'; }
 function renderRoadmap(){
   var el=document.getElementById('kRoadmap'); if(!el)return; var v=kView();
-  if(!v.list.length){ el.innerHTML='<div class="rm-empty">'+(v.custom?'Klicke &bdquo;Adaptierte Strategie finden&ldquo;, dann sucht die KI passende Maerkte und Groessen fuer den Bedarfsraum.':'Noch keine Maerkte gewaehlt.<br>Waehle Maerkte oder klicke &bdquo;Beste Strategie mit aktuellen Maerkten&ldquo;.')+'</div>'; return; }
+  if(!v.list.length){ el.innerHTML='<div class="rm-empty">'+(v.custom?'Klicke &bdquo;Stabile Strategie finden&ldquo;, dann stellt die KI aus unseren Maerkten den besten Mix fuer den Bedarfsraum zusammen.':'Noch keine Maerkte gewaehlt.<br>Waehle Maerkte oder klicke &bdquo;Beste Strategie mit aktuellen Maerkten&ldquo;.')+'</div>'; return; }
   var nowY=new Date().getFullYear(), y31=nowY+5, y36=nowY+10;
-  var h='<div class="rm-head"><div class="rm-kick">Backward Roadmap &middot; '+esc(KSMETA[kActive].t)+(v.custom?' &middot; adaptiert':'')+'</div><div class="rm-vision">'+esc(v.vision||'')+'</div>';
+  var h='<div class="rm-head"><div class="rm-kick">Backward Roadmap &middot; '+esc(KSMETA[kActive].t)+(v.custom?' &middot; Stabile Strategie':'')+'</div><div class="rm-vision">'+esc(v.vision||'')+'</div>';
   if(v.hhgs&&v.hhgs.length){ h+='<div class="rm-hhgs">'; v.hhgs.slice(0,3).forEach(function(x,i){ h+='<div class="rm-hhg"><b>High Hard Goal '+(i+1)+'</b>'+esc(typeof x==='string'?x:(x.goal||x.ziel||''))+'</div>'; }); h+='</div>'; }
   h+='</div><div class="rm-grid"><div class="rm-colh rm-cl">Road / Markt</div><div class="rm-colh">Womit heute starten</div><div class="rm-colh rm-vis">High Hard Goals bis '+y31+'</div><div class="rm-colh rm-vis">High Hard Goals bis '+y36+'</div>';
   v.list.forEach(function(it){
-    h+='<div class="rm-road rm-cl"><span class="rm-dot" style="background:'+it.color+'"></span><div><div class="rm-mname">'+esc(it.name)+'</div><div class="rm-vz">'+esc(it.vonZu||'')+'</div><div class="rm-start">Start: Jahr '+it.start+(v.custom?' &middot; ca. '+fmtDE(it.j5,1)+' Mio':'')+'</div></div></div>';
+    h+='<div class="rm-road rm-cl"><span class="rm-dot" style="background:'+it.color+'"></span><div><div class="rm-mname">'+esc(it.name)+'</div><div class="rm-vz">'+esc(it.vonZu||'')+'</div><div class="rm-start">Start: Jahr '+it.start+(v.custom?' &middot; '+it.pct+'&#37; von '+fmtDE(it.full,1)+' Mio = '+fmtDE(it.j5,1)+' Mio':'')+'</div>'+((v.custom&&it.pctGrund)?'<div class="rm-assume">Annahme: '+esc(it.pctGrund)+'</div>':'')+'</div></div>';
     h+='<div class="rm-cell"><div class="rm-startcard">'+esc(it.startNow||'')+'</div></div>';
     h+='<div class="rm-cell">'+goalCard(it.by2031)+'</div>';
     h+='<div class="rm-cell">'+goalCard(it.by2036)+'</div>';
@@ -1434,23 +1439,25 @@ function kAICallAdapt(fixSum){
   var sc=SC(), cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), visY=kVisionYear(), nowY=new Date().getFullYear(), y31=nowY+5, y36=nowY+10;
   var target=Math.round(need*10)/10, lo=Math.round(need*0.85*10)/10, hi=Math.round(need*1.1*10)/10;
   var bedarf=[]; for(var yy=2; yy<=KXMAX; yy+=2){ bedarf.push({jahr:yy, mio:Math.round(kNeed(yy)*10)/10}); }
-  var bekannt=kOrder.map(function(id){var i=islById(id);return {name:islName(id), marktvolumen:MKT[id].vol+' EUR', ekv_5j_mio:MKT[id].rampN[4], naehe:proxWordShort(i), wettbewerb:compWord(i)};});
-  var wild=(DATA.wild||[]).slice(0,8).map(function(w){return (w.raw||'').split(' - ')[0];});
+  var felder=kOrder.map(function(id){var i=islById(id),x=MKTX[id]||{};return {id:id, name:islName(id), ekv_5j_mio:MKT[id].rampN[4], marktvolumen:MKT[id].vol+' EUR', naehe:proxWordShort(i), wettbewerb:compWord(i), dynamik:growWord(i), fit:x.fit||''};});
   var gp=sc.g*100, gps=fmtDE(gp, gp%1===0?0:2), gtxt=sc.g>0?('Ergebnis-Puffer waechst '+gps+'% p.a.'):'Ergebnis-Puffer 25 Mio stabil';
-  var sys='Du bist Strategieberater fuer den Schulbuchverlag Ernst Klett Verlag (EKV). EKV-Kontext: das schwer kopierbare Kern-Asset sind Inhalte ueber alle Faecher und Lehrplaene, dazu enge Beziehungen zu Schulen und Lehrkraeften; Nachfrage-Treiber sind wachsende Heterogenitaet, Lehrkraeftemangel und Digitalisierung. Aufgabe: recherchiere und stelle ein Portfolio aus 3 bis 5 Wachstumsfeldern zusammen, dessen Beitraege den Bedarfsraum, also die Luecke zwischen Umsatz und noetigem Niveau, moeglichst genau fuellen und ihn NICHT uebererfuellen. WICHTIG zur Groesse: erfinde keine Zahlen. Die bekannten Felder sind bereits recherchiert, ekv_5j_mio ist der Jahresumsatz, den EKV dort nach 5 Jahren realistisch erreichen kann, abgeleitet aus dem Marktvolumen. Wenn du ein bekanntes Feld waehlst, uebernimm genau diese Groesse (ekv_5j_mio) unveraendert und schaetze sie NICHT neu. Wenn du ein neues Feld oder eine Wildcard vorschlaegst, leite die Groesse nach derselben Methode her: schaetze zuerst das Marktvolumen und dann den Umsatz, den EKV davon in 5 Jahren realistisch erreichen kann, ein realistischer Bruchteil des Volumens (Beispiel: Marktvolumen 30 Mio ergibt rund 9 Mio EKV-Umsatz nach 5 Jahren). Nenne im Feld groesse_basis das Marktvolumen UND den abgeleiteten EKV-Umsatz. Waehle die Felder so, dass die Summe der Groessen in den Bedarfsraum passt. Ein Feld, dessen Groesse allein schon groesser als der ganze Bedarfsraum ist, passt nicht und darf nicht gewaehlt werden, auch wenn es strategisch reizvoll ist. Kombiniere passende kleinere bekannte Felder mit ihrer gegebenen Groesse und bei Bedarf ein neues Feld, dessen Groesse du so waehlst, dass die Summe passt. Waehle je Feld ein Startjahr von 1 bis 5, das fuer EKV strategisch Sinn ergibt, und staffle die Starts so, dass die kumulierte Summe der Beitraege dem wachsenden Bedarfsraum Jahr fuer Jahr folgt und ihn in mittleren Jahren nicht ueberschiesst, also kleinere fruehe Felder zuerst und groessere spaeter. Begruende jede Wahl klar: warum das Feld zu EKV passt, worauf die Groesse beruht, und warum dieses Startjahr. Empfehle je Feld konkret, was EKV heute, bis '+y31+' und bis '+y36+' tun soll. Pruefe vor der Antwort, dass die Summe aller groesse_mio im Zielbereich liegt. Antworte ausschliesslich mit JSON, alle Texte auf Deutsch, knapp und konkret, keine Gedankenstriche.';
-  var usr='Szenario: '+KSMETA[kActive].t+' ('+gtxt+'). Umsatz-Wachstum '+fmtDE(kU,1)+'% p.a., Kosten-Wachstum '+fmtDE(kK,1)+'% p.a. Vision-Jahr ca. '+visY+'. Bedarfsraum am Kipp-Punkt (Jahr '+fmtDE(ref,1)+'): '+fmtDE(need,1)+' Mio EUR pro Jahr. ZIEL: die Summe der groesse_mio aller Felder soll rund '+fmtDE(target,1)+' Mio betragen, erlaubt sind '+fmtDE(lo,1)+' bis '+fmtDE(hi,1)+' Mio. Etwas darunter ist besser als deutlich darueber. Der Bedarfsraum waechst ueber die Zeit, die kumulierte Summe der Beitraege sollte in jedem Jahr ungefaehr diesen Werten entsprechen: '+JSON.stringify(bedarf)+'. Ein Feld startet in seinem Startjahr und erreicht seine Groesse erst 5 Jahre spaeter, davor traegt es nur anteilig bei. Bekannte, bereits recherchierte Felder, ekv_5j_mio ist die zu verwendende EKV-Groesse nach 5 Jahren und marktvolumen nur Kontext: '+JSON.stringify(bekannt)+'. Wildcard-Ideen: '+JSON.stringify(wild)+'. Antworte als JSON in genau dieser Form: {"vision":"ein aspirativer Satz fuer '+visY+', kein Zahlenziel","hhgs":["maximal 3 messbare High Hard Goals fuer '+visY+'"],"rationale":"warum dieses Portfolio den Bedarfsraum gut fuellt und wie die Summe zum Bedarf passt, unter 300 Zeichen","hinweis":"zentrale Annahmen zur Marktgroesse und Hauptrisiken","markets":[{"name":"Feldname, bei bekannten Feldern exakt der Name aus der Liste","start":Zahl,"groesse_mio":Zahl,"von_zu":"von ... zu ...","why":"warum dieses Feld strategisch zu EKV passt","groesse_basis":"bei bekannten Feldern das Wort bekannt; bei neuen Feldern Marktvolumen X Mio, davon Y Mio EKV-Umsatz nach 5 Jahren","timing_grund":"warum dieses Startjahr fuer EKV sinnvoll ist","start_now":"was EKV heute konkret tun soll","by_2031":{"do":"konkrete Massnahme","ziel":"messbares Ziel bis '+y31+'"},"by_2036":{"do":"konkrete Massnahme","ziel":"messbares Ziel bis '+y36+'"}}]}.';
-  if(fixSum!=null) usr+=' KORREKTUR: Dein vorheriger Vorschlag passte nicht in den Bedarfsraum (Summe rund '+fmtDE(fixSum,1)+' Mio, Ziel rund '+fmtDE(target,1)+' Mio). Bekannte Felder behalten ihre gegebene Groesse, waehle also kleinere bekannte Felder oder weniger Felder oder ergaenze ein passend dimensioniertes neues Feld, sodass die Summe der groesse_mio zwischen '+fmtDE(lo,1)+' und '+fmtDE(hi,1)+' Mio liegt. Staffle die Startjahre so, dass die kumulierte Summe den Bedarfsraum in keinem Jahr deutlich ueberschreitet.';
+  var sys='Du bist Strategieberater fuer den Schulbuchverlag Ernst Klett Verlag (EKV). EKV-Kontext: das schwer kopierbare Kern-Asset sind Inhalte ueber alle Faecher und Lehrplaene, dazu enge Beziehungen zu Schulen und Lehrkraeften; Nachfrage-Treiber sind wachsende Heterogenitaet, Lehrkraeftemangel und Digitalisierung. Aufgabe: stelle aus UNSEREN bekannten Feldern den besten, in sich schluessigen Mix zusammen, der im Bedarfsraum bleibt, also der Luecke zwischen Umsatz und noetigem Niveau. Nutze ausschliesslich die vorgegebenen Felder, erfinde keine neuen Felder und keine eigenen Groessen. Pro Feld waehlst du einen Anteil prozent von 0 bis 100 an der vollen EKV-5-Jahres-Groesse ekv_5j_mio und ein Startjahr von 1 bis 5. Der Beitrag eines Feldes ist ekv_5j_mio mal prozent durch 100 und laeuft ueber 5 Jahre ab dem Startjahr hoch. Mit dem Anteil kannst du grosse Felder klein dosieren statt sie wegzulassen, zum Beispiel ein 90-Mio-Feld zu 20 Prozent als fokussierten Einstieg. Waehle Felder, Anteile und Startjahre so, dass die Summe der Beitraege im Bedarfsraum bleibt, etwas darunter ist gut und darueber nicht, und dass die kumulierte Summe dem ueber die Zeit wachsenden Bedarf Jahr fuer Jahr folgt, also kleinere oder frueh dosierte Beitraege zuerst und groessere spaeter. Begruende je Feld klar und nachvollziehbar: warum das Feld zu EKV passt, warum genau dieser Anteil (zum Beispiel Fokus auf ein Teilsegment, begrenzte Ressourcen, schrittweiser Aufbau), und warum dieses Startjahr. Die Anteile und Annahmen muessen Sinn ergeben und werden in der Roadmap verankert. Empfehle je Feld konkret, was EKV heute, bis '+y31+' und bis '+y36+' tun soll. Pruefe vor der Antwort, dass die Summe aller Beitraege im Zielbereich liegt. Antworte ausschliesslich mit JSON, alle Texte auf Deutsch, knapp und konkret, keine Gedankenstriche.';
+  var usr='Szenario: '+KSMETA[kActive].t+' ('+gtxt+'). Umsatz-Wachstum '+fmtDE(kU,1)+'% p.a., Kosten-Wachstum '+fmtDE(kK,1)+'% p.a. Vision-Jahr ca. '+visY+'. Bedarfsraum am Kipp-Punkt (Jahr '+fmtDE(ref,1)+'): '+fmtDE(need,1)+' Mio EUR pro Jahr. ZIEL: die Summe der Beitraege aller gewaehlten Felder soll rund '+fmtDE(target,1)+' Mio betragen, erlaubt sind '+fmtDE(lo,1)+' bis '+fmtDE(hi,1)+' Mio, lieber etwas darunter als darueber. Der Bedarfsraum waechst ueber die Zeit, die kumulierte Summe der Beitraege sollte in jedem Jahr ungefaehr diesen Werten entsprechen: '+JSON.stringify(bedarf)+'. Ein Feld startet in seinem Startjahr und erreicht seinen Beitrag erst 5 Jahre spaeter, davor traegt es nur anteilig bei. Unsere Felder, ekv_5j_mio ist die volle EKV-Groesse nach 5 Jahren die du per Anteil dosierst, marktvolumen nur als Kontext: '+JSON.stringify(felder)+'. Antworte als JSON in genau dieser Form: {"vision":"ein aspirativer Satz fuer '+visY+', kein Zahlenziel","hhgs":["maximal 3 messbare High Hard Goals fuer '+visY+'"],"rationale":"warum dieser Mix im Bedarfsraum bleibt und in sich schluessig ist, unter 300 Zeichen","hinweis":"zentrale Annahmen hinter den Anteilen und Hauptrisiken","markets":[{"id":Zahl aus der Liste,"prozent":Zahl 0 bis 100,"start":Zahl 1 bis 5,"von_zu":"von ... zu ...","why":"warum dieses Feld strategisch zu EKV passt","prozent_grund":"warum genau dieser Anteil, konkret begruendet","timing_grund":"warum dieses Startjahr","start_now":"was EKV heute konkret tun soll","by_2031":{"do":"konkrete Massnahme","ziel":"messbares Ziel bis '+y31+'"},"by_2036":{"do":"konkrete Massnahme","ziel":"messbares Ziel bis '+y36+'"}}]}.';
+  if(fixSum!=null) usr+=' KORREKTUR: Dein vorheriger Mix ergab eine Summe von rund '+fmtDE(fixSum,1)+' Mio und blieb nicht im Bedarfsraum (Ziel rund '+fmtDE(target,1)+' Mio). Senke die Anteile, lass zu grosse Felder weg oder nimm weniger Felder, sodass die Summe der Beitraege zwischen '+fmtDE(lo,1)+' und '+fmtDE(hi,1)+' Mio liegt, und staffle die Startjahre so, dass die kumulierte Summe den Bedarfsraum in keinem Jahr deutlich ueberschreitet.';
   return kAIFetch(sys,usr);
 }
 function kKnownId(name){ if(!name)return null; function norm(s){return String(s).toLowerCase().replace(/[^a-z0-9\u00e4\u00f6\u00fc\u00df]/g,'');} var a=norm(name), hit=null; kOrder.forEach(function(id){var b=norm(islName(id)); if(!b)return; if(a===b || a.indexOf(b)>=0 || (b.indexOf(a)>=0 && a.length>=9)) hit=id; }); return hit; }
 function mapAdapt(r){
   function ph(o){ return o?{do:o.do||o.massnahme||o.action||'', ziel:o.ziel||o.goal||o.hhg||''}:null; }
   return (r.markets||[]).map(function(m){
-    var name=m.name||'Wachstumsfeld', j5=Math.max(0,parseFloat(m.groesse_mio!=null?m.groesse_mio:m.j5)||0);
-    var vonZu=m.von_zu||m.vonZu||'', basis=m.groesse_basis||m.groesseBasis||'', kid=kKnownId(name);
-    if(kid){ j5=MKT[kid].rampN[4]; basis='Bekanntes Feld: Marktvolumen '+MKT[kid].vol+' EUR, davon '+MKT[kid].umsatz+' EUR EKV-Umsatz nach 5 Jahren.'; if(!vonZu&&MKTX[kid]&&MKTX[kid].vonZu)vonZu=MKTX[kid].vonZu; }
-    return { name:name, start:clampYr(m.start), j5:j5, vonZu:vonZu, why:m.why||'', startNow:m.start_now||m.startNow||'', by2031:ph(m.by_2031||m.bis_2031), by2036:ph(m.by_2036||m.bis_2036), groesseBasis:basis, timingGrund:m.timing_grund||m.timingGrund||'' };
-  }).filter(function(m){return m.name&&m.j5>0;});
+    var id=+(m.id||0); if(!MKT[id]) id=kKnownId(m.name)||0; if(!MKT[id]) return null;
+    var rawp=(m.prozent!=null?m.prozent:(m.percent!=null?m.percent:(m.pct!=null?m.pct:(m.anteil!=null?m.anteil:100))));
+    var pct=Math.max(0,Math.min(100,Math.round(parseFloat(rawp)||0))); var x=MKTX[id]||{};
+    return { id:id, pct:pct, start:clampYr(m.start),
+      vonZu:m.von_zu||m.vonZu||x.vonZu||'', why:m.why||x.fit||'', startNow:m.start_now||m.startNow||x.startNow||'',
+      by2031:ph(m.by_2031||m.bis_2031)||{do:x.do2031||'',ziel:''}, by2036:ph(m.by_2036||m.bis_2036)||{do:x.do2036||'',ziel:''},
+      pctGrund:m.prozent_grund||m.pct_grund||m.anteil_grund||m.prozentGrund||'', timingGrund:m.timing_grund||m.timingGrund||'' };
+  }).filter(function(m){return m&&m.pct>0;});
 }
 function kRunBest(){
   var sc=SC(), btn=document.getElementById('kBest'), ba=document.getElementById('kBestAdapt'), note=document.getElementById('kBestNote'), orig=btn.innerHTML;
@@ -1474,17 +1481,17 @@ function kRunAdapt(){
   btn.disabled=true; if(bb)bb.disabled=true;
   var who=kAI.provider==='openai'?'ChatGPT':'Claude';
   var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref);
-  btn.innerHTML='KI sucht...'; renderSelector(); note.hidden=false; note.innerHTML='Frage '+who+' nach Maerkten, die in den Bedarfsraum von '+fmtDE(need,1)+' Mio passen...';
+  btn.innerHTML='KI sucht...'; renderSelector(); note.hidden=false; note.innerHTML='Frage '+who+' nach dem besten, stabilen Mix aus unseren Maerkten fuer den Bedarfsraum von '+fmtDE(need,1)+' Mio...';
   function done(){ btn.disabled=false; if(bb)bb.disabled=false; btn.innerHTML=orig; }
   function fail(e){ sc.mode='aktuell'; sc.adapt=null; done(); renderSelector(); kApplyView(); renderCover(); note.hidden=false; note.innerHTML='<b>KI nicht erreichbar.</b> '+esc(e.message)+' Bitte erneut versuchen.'; }
   function apply(r,ms){ sc.adapt={ markets:ms, vision:r.vision||'', hhgs:(r.hhgs||[]).slice(0,3), whyNot:r.hinweis||r.why_not||'', rationale:r.rationale||'', src:who+' ('+kAI.model+'):', ref:ref, visY:kVisionYear() }; done(); renderSelector(); renderExplain(); kApplyView(); renderCover(); }
-  function sumOf(ms){ return ms.reduce(function(a,m){return a+m.j5;},0); }
-  function maxOver(ms){ var mx=0; for(var tt=2;tt<=KXMAX;tt++){ var wedge=kNeed(tt); if(wedge>3){ var cum=0; ms.forEach(function(m){cum+=kRampAt(rampFromJ5(m.j5),tt,m.start);}); if(cum/wedge>mx)mx=cum/wedge; } } return mx; }
+  function sumOf(ms){ return ms.reduce(function(a,m){return a+kEff5(m);},0); }
+  function maxOver(ms){ var mx=0; for(var tt=2;tt<=KXMAX;tt++){ var wedge=kNeed(tt); if(wedge>3){ var cum=0; ms.forEach(function(m){cum+=kRampAt(kEffRamp(m),tt,m.start);}); if(cum/wedge>mx)mx=cum/wedge; } } return mx; }
   kAICallAdapt().then(function(r){
     var ms=mapAdapt(r); if(!ms.length) throw new Error('keine Maerkte erhalten');
     var sum=sumOf(ms), ovr=maxOver(ms);
     if(need>0 && (sum>need*1.3 || sum<need*0.6 || ovr>1.5)){
-      note.innerHTML=who+' justiert Groessen und Startjahre auf den Bedarfsraum...';
+      note.innerHTML=who+' dosiert die Anteile auf den Bedarfsraum...';
       return kAICallAdapt(Math.round(sum*10)/10).then(function(r2){ var ms2=mapAdapt(r2); apply(ms2.length?r2:r, ms2.length?ms2:ms); }, function(){ apply(r,ms); });
     }
     apply(r,ms);
@@ -1499,7 +1506,7 @@ function kRunAdapt(){
   mk.addEventListener('input',function(e){ var inp=e.target, sc=SC();
     if(inp.dataset.sid!=null){ sc.start[+inp.dataset.sid]=clampYr(inp.value); kApplyView(); renderCover(); return; }
     if(inp.dataset.asid!=null && sc.adapt){ var i=+inp.dataset.asid; if(sc.adapt.markets[i]){sc.adapt.markets[i].start=clampYr(inp.value); kApplyView(); renderCover();} return; }
-    if(inp.dataset.aj5!=null && sc.adapt){ var j=+inp.dataset.aj5; if(sc.adapt.markets[j]){sc.adapt.markets[j].j5=Math.max(0,parseFloat(inp.value)||0); kApplyView(); renderCover();} return; }
+    if(inp.dataset.apct!=null && sc.adapt){ var j=+inp.dataset.apct; if(sc.adapt.markets[j]){ var p=Math.max(0,Math.min(100,parseInt(inp.value,10)||0)); sc.adapt.markets[j].pct=p; var pid=sc.adapt.markets[j].id, ef=(MKT[pid]?MKT[pid].rampN[4]*p/100:0); var un=inp.parentNode.querySelector('.kunit'); if(un)un.textContent='% = '+fmtDE(Math.round(ef*10)/10,1)+' Mio'; kApplyView(); renderCover(); } return; }
   });
   document.querySelectorAll('#sk .kst').forEach(function(b){b.addEventListener('click',function(){ kActive=b.dataset.scen; renderScenMeta(); renderSelector(); kApplyView(); renderCover(); renderExplain(); });});
   document.querySelectorAll('#sk .kvt').forEach(function(b){b.addEventListener('click',function(){ SC().view=b.dataset.v; renderScenMeta(); kApplyView(); });});
