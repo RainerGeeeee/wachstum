@@ -363,7 +363,7 @@ body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
 .rm-hhgs{display:flex;flex-wrap:wrap;gap:10px}
 .rm-hhg{background:var(--okk);color:var(--ink);font-family:"JetBrains Mono",monospace;font-size:11.5px;font-weight:600;line-height:1.42;padding:10px 13px;max-width:300px;flex:1 1 210px}
 .rm-hhg b{display:block;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.62;margin-bottom:4px;font-weight:700}
-.rm-grid{display:grid;grid-template-columns:minmax(190px,1.5fr) 1fr 1fr 1.1fr}
+.rm-grid{display:grid;grid-template-columns:minmax(180px,1.35fr) 1.15fr 1.25fr 1.25fr}
 .rm-colh{padding:12px 14px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700;border-bottom:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.03)}
 .rm-colh.rm-vis{color:var(--okk)}
 .rm-cl{border-right:1px solid rgba(255,255,255,.14)}
@@ -372,14 +372,13 @@ body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
 .rm-mname{font-family:Archivo,sans-serif;font-weight:700;font-size:14px;line-height:1.2}
 .rm-vz{font-size:11px;color:rgba(255,255,255,.62);margin-top:3px;line-height:1.4}
 .rm-start{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--okk);font-weight:700;margin-top:5px;letter-spacing:.03em}
-.rm-cell{padding:14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:7px}
-.rm-cellv{background:rgba(141,178,74,.09)}
-.rm-ms{background:rgba(255,255,255,.07);border-left:2px solid var(--pos2);padding:7px 9px;font-size:11.5px;line-height:1.4;color:#fff}
-.rm-ms i{display:block;font-family:"JetBrains Mono",monospace;font-style:normal;font-size:9px;letter-spacing:.06em;color:var(--okk);font-weight:700;margin-bottom:2px}
-.rm-msv{border-left-color:var(--okk);background:rgba(141,178,74,.17);font-weight:600}
+.rm-cell{padding:14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:8px}
+.rm-startcard{background:rgba(255,255,255,.07);border-left:2px solid var(--pos2);padding:9px 11px;font-size:11.5px;line-height:1.45;color:#fff}
+.rm-goalcard{background:rgba(141,178,74,.13);border-left:2px solid var(--okk);padding:9px 11px}
+.rm-goalv{font-size:12px;line-height:1.4;color:#fff;font-weight:600}
+.rm-goaldo{font-size:11px;line-height:1.45;color:rgba(255,255,255,.72);margin-top:6px}
+.rm-goaldo i{display:inline-block;font-style:normal;font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--okk);font-weight:700;margin-right:6px}
 .rm-none{color:rgba(255,255,255,.25);font-size:13px}
-.rm-foot{padding:15px 26px;font-family:"JetBrains Mono",monospace;font-size:12px;color:#fff;border-top:1px solid rgba(255,255,255,.14);display:flex;gap:12px;flex-wrap:wrap;align-items:baseline}
-.rm-flbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--okk);font-weight:700}
 .rm-empty{padding:42px 26px;color:rgba(255,255,255,.6);font-size:13px;text-align:center;line-height:1.6}
 @media(max-width:720px){ .rm-grid{grid-template-columns:1fr} .rm-cl{border-right:none} .rm-colh{display:none} .rm-road{border-bottom:none;padding-bottom:2px} .rm-cell{padding-top:6px} }
 .kbest-note b{color:var(--ink)} .kbest-note .kerr{color:var(--yellow);font-size:11px}
@@ -1261,46 +1260,73 @@ function renderSelector(){
 }
 function renderKorridor(){ renderChart1(); renderScenMeta(); renderSelector(); kApplyView(); renderKipp(); renderCover(); renderExplain(); }
 
+var MKTX={
+ 1:{vonZu:'von Vormittagsmaterial zu eigenstaendigem Nachmittagsangebot', fit:'Gleiche Lerninhalte und nah am Bestand, mit Bruecke vom Vormittag in den Nachmittag und direktem Vermarktungshebel ueber Lehrkraefte.', startNow:'Schmerzpunkte in den Hauptfaechern vermessen und Potenzialanalyse erstellen.', do2031:'Bestehende Produkte fuer den Nachmittag adaptieren und adaptive Selbstlern-Produkte mit Absprung zur Nachhilfe pilotieren.', do2036:'Vertrieb ueber Lehrkraefte skalieren und die Vormittag-Nachmittag-Bruecke fest verankern.', risk:'viele Mitbewerber, viele kostenfreie Angebote, hohe B2C-Eintrittskosten'},
+ 2:{vonZu:'von der Schule zu fruehkindlicher Bildung', fit:'Logische Expansion nach unten, nah an der vorhandenen Expertise, da Lernen frueher beginnt.', startNow:'Marktkenntnis aufbauen, Marktakteure und Marktzugang analysieren.', do2031:'Produktfelder und Kompetenzen identifizieren, Konkurrenzanalyse, eigene Kitas der Klett-Gruppe als Testfeld nutzen.', do2036:'Vorschul-Produktlinie ausrollen und mit dem Elternmarkt verzahnen.', risk:'kann Kapazitaet anderer EKV-Angebote binden'},
+ 3:{vonZu:'von Schulmaterial zu Berufsorientierung und Matching', fit:'Uebergang aus der Schule heraus, rund fuenfmal so gross wie der Kernmarkt und vom Fachkraeftemangel getrieben.', startNow:'Eigene Einheit gruenden, Konzept und MVP definieren.', do2031:'Daten fuer Matching aufbauen, KI-Algorithmus entwickeln, Unternehmensnetzwerk und Vertrieb aufbauen.', do2036:'Matching-Plattform skalieren und als Standard fuer den Uebergang Schule zu Beruf etablieren.', risk:'KI kann den Markt umbauen, starke Konkurrenz wie die Agentur fuer Arbeit, EKV-Fokus bisher zu schulisch'},
+ 4:{vonZu:'von Bildungsmedien zu Foerdermittel-Beratung plus Loesung', fit:'Klett steht fuer Vertrauen und hat die Zugaenge, und kann Bildungsmedien, Diagnostik, KI und Beratung buendeln. Das Startchancen-Programm bringt rund 600 Mio EUR pro Jahr.', startNow:'Foerdermittel-Map fuer alle Bundeslaender erstellen und Netzwerk aktivieren.', do2031:'Interdisziplinaere Task Force aufsetzen, Leadgenerierung starten und ein ganzheitliches Foerdermittel-Beratungsangebot pilotieren.', do2036:'Beratungs- und Loesungsangebot bundesweit ausrollen und ueber strategische Partnerschaften absichern.', risk:'hohe Foerdermittel-Buerokratie, langwierige Entscheidungen, hohe Dynamik der Bedarfe'},
+ 5:{vonZu:'von Standardmaterial zu gezielter Begabungsfoerderung', fit:'Schliesst eine Luecke im Angebot (Missing Link) bei geringem Wettbewerb.', startNow:'Bedarf und Zielgruppe analysieren und festlegen.', do2031:'Eigene Produkte fuer die Begabungsfoerderung entwickeln, Testphase und Adoption, Geschaeftsmodell klaeren.', do2036:'Angebot etablieren und in bestehende Foerderlogiken integrieren.', risk:'hoher Marketingaufwand, sehr heterogener Markt, noch wenig Aufmerksamkeit, wenig Lehrkraefte-Kompetenz'},
+ 6:{vonZu:'von Premium-only zu Premium plus Lowcost', fit:'Direkt am Kern: heute Premium zu mittlerem Preis, der Lowcost-Bereich ist unbesetzt. Angegriffen werden nur Segmente mit geringem Marktanteil, bei geringem Wettbewerb.', startNow:'Lowcost-Rahmen fuer EKV definieren.', do2031:'Abgespeckte Ableitungen bestehender Werke statt Neuentwicklung, Vertrags- und Upselling-Modell, Pilot im Testmarkt mit Kundenfeedback.', do2036:'Lowcost-Linie ausrollen und das Premium-Lowcost-Portfolio sauber differenzieren.', risk:'Gefahr der Verzettelung und Kannibalisierung, bisheriges Premium-Mindset'},
+ 7:{vonZu:'von Schulmaterial zu institutioneller Nachhilfe on demand', fit:'EKV-Material mit direktem Unterrichtsbezug ist die Kernkompetenz, dazu bestehende Kontakte zum Personal. Wettbewerber decken meist nur Nachmittag oder Institutionen ab.', startNow:'Marktanalyse durchfuehren.', do2031:'Investitionsrechnung mit Produkt-Portfolio und Geschaeftsmodell, Zahlungsbereitschaft und Vertriebswege pruefen, Nachhilfe-on-Demand-Modell aufsetzen.', do2036:'Hybrid- und Digital-Modell skalieren und als institutionelle Anlaufstelle etablieren.', risk:'Material teils schon aus dem Vormittag, daher kein echter Zusatzmarkt, starke Konkurrenz'},
+ 8:{vonZu:'von schulischer Bildung zu Bildung im Alter', fit:'Inhalte, Didaktik und ein Online-Campus sind vorhanden, dazu positive Markenerinnerung an Klett.', startNow:'Marktanalyse und Kooperationspartner identifizieren.', do2031:'Kooperationen mit Fernschulen, Anlehnung an das Seniorenstudium, Markt als Consumer-Markt vermessen, Lerngruppen statt blossem Faktenwissen.', do2036:'Ueber strategische Partner wie Heime, Vereine und Reiseanbieter breit ausrollen.', risk:'keine Bekanntheit in der Zielgruppe, Inhalt passt evtl. nicht, hohe Investition bei null bekannten Kunden'},
+ 9:{vonZu:'von Schulinhalten zu einer Eltern-Plattform', fit:'Bildung koennen wir bereits, die Plattform entlastet Eltern bei Hausaufgaben, Nachhilfe und einem Schul-Dashboard.', startNow:'Markt und Wettbewerb analysieren und Bedarf definieren.', do2031:'Eltern befragen, Geschaeftsmodell entwickeln, MVP erstellen und pilotieren.', do2036:'Ueber Vorbestellung skalieren und Vertrieb, Produktentwicklung und Redaktion aufbauen.', risk:'Eltern schwer erreichbar, Zahlungsbereitschaft fraglich, moegliche Veraergerung der Lehrkraefte'},
+ 10:{vonZu:'von Einzelmaterial zu einer digitalen Lernstandsakte', fit:'Direkter Bezug zum Vormittag, steigert die Effizienz von Nachmittag und Nachhilfe und vergroessert den Partner-Nachhilfemarkt.', startNow:'Verfuegbare Daten ermitteln.', do2031:'An Projekte wie Bildungsdaten und Mein Bildungsraum andocken, Konzept und Geschaeftsmodell entwickeln.', do2036:'Lernstandsakte als Modul der Lernplattform ausrollen, 3 EUR pro Schueler:in bei wachsender Adoption.', risk:'Datenerfassung problematisch, Mehrwert schwer vermittelbar'}
+};
+function compWord(i){return i.compMode==='wenig'?'gering':(i.compMode==='moderat'?'moderat':'hoch');}
+function proxWordShort(i){var p=i.proxMode; return p==='Heim'?'sehr nah am Kern':(p==='H1'?'nah am Kern':(p==='H2'?'mittlere Naehe zum Kern':'kernfern'));}
+function growWord(i){return i.growMode;}
+function kFund(id){var i=islById(id); return i.gNorm+i.eNorm+i.pNorm;}
 function kVisionYear(){ var cr=kCross(); var d=new Date(); d.setDate(d.getDate()+Math.round((cr!==null&&cr<=KXMAX?cr:KXMAX)*365.2425)); return d.getFullYear(); }
 function kSelectBest(){
-  var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), w=eff();
-  var cand=kOrder.map(function(id){return {id:id,score:scoreOf(islById(id),w),j5:MKT[id].rampN[4]};}).sort(function(a,b){return b.score-a.score;});
-  var ids=[],sum=0; for(var i=0;i<cand.length && sum<need;i++){ids.push(cand[i].id);sum+=cand[i].j5;}
+  var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref);
+  var cand=kOrder.map(function(id){return {id:id,f:kFund(id),j5:MKT[id].rampN[4]};}).sort(function(a,b){return b.f-a.f;});
+  var ids=[],sum=0; for(var i=0;i<cand.length && sum<need*1.05;i++){ids.push(cand[i].id);sum+=cand[i].j5;}
   if(!ids.length && cand.length)ids.push(cand[0].id);
   return ids;
 }
+function phaseGoals(id,s,nowY){
+  var j5=MKT[id].rampN[4], t31=kMAt(id,(nowY+5)-nowY,s), t36=kMAt(id,(nowY+10)-nowY,s);
+  var z31 = t31<0.1 ? ('Markteintritt vorbereitet, Start in Jahr '+s) : (fmtDE(t31,1)+' Mio Jahresumsatz'+(t31>=j5-0.05?', volles Potenzial':', im Hochlauf'));
+  var z36 = t36<0.1 ? 'Markteintritt und Hochlauf gestartet' : (Math.abs(t36-t31)<0.05 ? (fmtDE(t36,1)+' Mio gehalten und Marktanteil ausgebaut') : (fmtDE(t36,1)+' Mio Jahresumsatz'+(t36>=j5-0.05?', volles Potenzial':'')));
+  return {z31:z31, z36:z36};
+}
 function kBuildStrat(){
-  var sc=SC(), g=sc.g, cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), got=kStackAt(ref), w=eff(), visY=kVisionYear();
+  var sc=SC(), g=sc.g, cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), got=kStackAt(ref), visY=kVisionYear(), nowY=new Date().getFullYear();
   var ids=kOrder.filter(function(id){return sc.sel.has(id);});
-  var ranks={}, byScore=kOrder.slice().sort(function(a,b){return scoreOf(islById(b),w)-scoreOf(islById(a),w);}); byScore.forEach(function(id,i){ranks[id]=i+1;});
   var sumJ5=ids.reduce(function(a,id){return a+MKT[id].rampN[4];},0), pct=need>0?Math.round(100*got/need):100;
   var gp=g*100, gps=fmtDE(gp, gp%1===0?0:2), gtxt=g>0?('Ergebnis-Puffer um '+gps+'% pro Jahr gesteigert'):'Ergebnis-Puffer von 25 Mio stabil gehalten';
   var cov=pct>=100?'vollstaendig gedeckt':('zu '+pct+'% gedeckt');
   var hhgs=[ 'Zusaetzlichen Wachstumsbedarf von '+fmtDE(need,1)+' Mio bis '+visY+' aus neuen Maerkten '+cov,
              ids.length+' neue Maerkte mit zusammen '+fmtDE(sumJ5,1)+' Mio Umsatzpotenzial etabliert', gtxt ];
   var markets={};
-  ids.forEach(function(id){ var s=sc.start[id]||1, j5=MKT[id].rampN[4], mid=MKT[id].rampN[2];
-    markets[id]={ vonZu:'von 0 zu '+fmtDE(j5,1)+' Mio Umsatzpotenzial',
-      why:'Voting-Rang '+ranks[id]+' von 10, Umsatzpotenzial '+fmtDE(j5,1)+' Mio.',
-      timing: s<=1?'Sofort, traegt frueh zur Deckung des Bedarfs bei.':('Ab Jahr '+s+', gestaffelt nach Kapazitaet und Reifegrad.'),
-      milestones:[ {jahr:s,ziel:'Markteintritt'}, {jahr:s+2,ziel:'ca. '+fmtDE(mid,1)+' Mio Jahresumsatz (Hochlauf)'}, {jahr:s+4,ziel:fmtDE(j5,1)+' Mio, volles Potenzial'} ] };
+  ids.forEach(function(id){ var s=sc.start[id]||1, j5=MKT[id].rampN[4], x=MKTX[id]||{}, i=islById(id), pg=phaseGoals(id,s,nowY);
+    markets[id]={ vonZu:x.vonZu||('von 0 zu '+fmtDE(j5,1)+' Mio Umsatzpotenzial'),
+      why:(x.fit?x.fit+' ':'')+'Marktvolumen '+MKT[id].vol+', Wettbewerb '+compWord(i)+', '+proxWordShort(i)+', Hochlauf auf '+fmtDE(j5,1)+' Mio in 5 Jahren.',
+      startNow:x.startNow||'Markt und Zielgruppe analysieren.',
+      by2031:{ do:x.do2031||'Angebot entwickeln und pilotieren.', ziel:pg.z31 },
+      by2036:{ do:x.do2036||'Angebot skalieren.', ziel:pg.z36 } };
   });
-  return { src:'', rationale:'Der Optimierer waehlt die bestbewerteten Maerkte (Voting), bis der Bedarf von '+fmtDE(need,1)+' Mio gedeckt ist: '+ids.length+' Maerkte mit zusammen '+fmtDE(sumJ5,1)+' Mio Umsatzpotenzial.',
-    whyNot:'Die uebrigen Maerkte sind nicht noetig, weil der Bedarf von '+fmtDE(need,1)+' Mio mit dieser Auswahl bereits gedeckt ist und sie niedrigere Voting-Scores haben. Mehr Maerkte wuerden Ressourcen binden, ohne den Korridor weiter zu schliessen.',
-    vision:KSMETA[kActive].t+': Wachstumskorridor bis '+visY+' geschlossen, '+gtxt+'.',
+  var unsel=kOrder.filter(function(id){return !sc.sel.has(id);});
+  var weak=unsel.slice().sort(function(a,b){return kFund(a)-kFund(b);}).slice(0,3).map(function(id){var i=islById(id),x=MKTX[id]||{}; return islName(id)+' ('+proxWordShort(i)+', Wettbewerb '+compWord(i)+(x.risk?', '+x.risk:'')+')';});
+  var whyNot = unsel.length ? ('Die uebrigen Maerkte schliessen die Luecke nicht besser, gemessen an Naehe zum Kern, Wettbewerb, Marktdynamik und Potenzial. Beispiele: '+weak.join('; ')+'. Der Bedarf von '+fmtDE(need,1)+' Mio ist mit der gewaehlten Kombination bereits '+cov+', weitere Maerkte wuerden vor allem Ressourcen binden.') : 'Alle verfuegbaren Maerkte sind Teil der Strategie.';
+  return { src:'', rationale:'Die beste Strategie waehlt die Maerkte, die den Bedarf von '+fmtDE(need,1)+' Mio mit dem staerksten strategischen Fit fuer EKV decken: '+ids.length+' Maerkte mit zusammen '+fmtDE(sumJ5,1)+' Mio Umsatzpotenzial. Bewertet nach Naehe zum Kern, Wettbewerb, Marktdynamik und Umsatzpotenzial.',
+    whyNot:whyNot,
+    vision:'Klett schliesst die Wachstumsluecke bis '+visY+' und wird in den gewaehlten neuen Maerkten zum festen Anbieter, getragen vom schwer kopierbaren Kern-Asset: Inhalte ueber alle Faecher und Lehrplaene.',
     hhgs:hhgs, markets:markets, ref:ref, visY:visY };
 }
 function aiToStrat(r){
   var markets={};
   (r.markets||[]).forEach(function(m){ var id=+m.id; if(!MKT[id])return;
-    markets[id]={ vonZu:m.von_zu||m.vonZu||'', why:m.why||'', timing:m.timing||'',
-      milestones:(m.milestones||[]).map(function(x){return {jahr:(+x.jahr)||1, ziel:x.ziel||x.goal||''};}) }; });
+    function ph(o){ return o?{do:o.do||o.massnahme||o.action||'', ziel:o.ziel||o.goal||o.hhg||''}:null; }
+    markets[id]={ vonZu:m.von_zu||m.vonZu||'', why:m.why||'', startNow:m.start_now||m.startNow||m.heute||'',
+      by2031:ph(m.by_2031||m.bis_2031), by2036:ph(m.by_2036||m.bis_2036) }; });
   return { vision:r.vision||'', hhgs:(r.hhgs||[]).slice(0,3), whyNot:r.why_not||r.whyNot||'', rationale:r.rationale||'', markets:markets };
 }
 function mergeStrat(base, ai){
   if(ai.vision)base.vision=ai.vision; if(ai.hhgs&&ai.hhgs.length)base.hhgs=ai.hhgs; if(ai.whyNot)base.whyNot=ai.whyNot; if(ai.rationale)base.rationale=ai.rationale;
   Object.keys(base.markets).forEach(function(id){ var a=ai.markets[id]; if(!a)return; var b=base.markets[id];
-    if(a.vonZu)b.vonZu=a.vonZu; if(a.why)b.why=a.why; if(a.timing)b.timing=a.timing; if(a.milestones&&a.milestones.length)b.milestones=a.milestones; });
+    if(a.vonZu)b.vonZu=a.vonZu; if(a.why)b.why=a.why; if(a.startNow)b.startNow=a.startNow;
+    if(a.by2031&&(a.by2031.do||a.by2031.ziel))b.by2031=a.by2031; if(a.by2036&&(a.by2036.do||a.by2036.ziel))b.by2036=a.by2036; });
   return base;
 }
 function renderExplain(){
@@ -1309,30 +1335,29 @@ function renderExplain(){
   var ids=kOrder.filter(function(id){return sc.sel.has(id);}), h='';
   var lead=(st.src?('<b>'+esc(st.src)+'</b> '):'')+esc(st.rationale||'');
   if(lead.trim())h+='<p class="kx-lead">'+lead+'</p>';
-  h+='<div class="kx-h">Warum diese Maerkte und dieser Zeitpunkt</div>';
+  h+='<div class="kx-h">Warum diese Maerkte</div>';
   ids.forEach(function(id){ var m=(st.markets&&st.markets[id])||{};
-    h+='<div class="kx-m"><span class="kx-dot" style="background:'+kCol[id]+'"></span><div><b>'+esc(islName(id))+'</b> <span class="kx-start">Start Jahr '+(sc.start[id]||1)+'</span>'+(m.why?'<div>'+esc(m.why)+'</div>':'')+(m.timing?'<div class="kx-t">Timing: '+esc(m.timing)+'</div>':'')+'</div></div>'; });
+    h+='<div class="kx-m"><span class="kx-dot" style="background:'+kCol[id]+'"></span><div><b>'+esc(islName(id))+'</b> <span class="kx-start">Start Jahr '+(sc.start[id]||1)+'</span>'+(m.why?'<div>'+esc(m.why)+'</div>':'')+(m.startNow?'<div class="kx-t">Erster Schritt: '+esc(m.startNow)+'</div>':'')+'</div></div>'; });
   if(st.whyNot)h+='<div class="kx-h">Warum nicht die anderen</div><p class="kx-wn">'+esc(st.whyNot)+'</p>';
   note.innerHTML=h; note.hidden=false;
 }
+function goalCard(b){ if(!b||(!b.ziel&&!b.do))return '<span class="rm-none">&middot;</span>'; return '<div class="rm-goalcard"><div class="rm-goalv">'+esc(b.ziel||'')+'</div>'+(b.do?'<div class="rm-goaldo"><i>Massnahme</i>'+esc(b.do)+'</div>':'')+'</div>'; }
 function renderRoadmap(){
   var el=document.getElementById('kRoadmap'); if(!el)return; var sc=SC();
   if(!sc.sel.size){ el.innerHTML='<div class="rm-empty">Noch keine Maerkte gewaehlt.<br>Waehle Maerkte oder klicke &bdquo;Beste Strategie zeigen&ldquo;, dann erscheint die Roadmap.</div>'; return; }
   var st=sc.strat||kBuildStrat();
-  var nowY=new Date().getFullYear(), y5=nowY+5, y10=nowY+10, visY=st.visY||kVisionYear();
+  var nowY=new Date().getFullYear(), y31=nowY+5, y36=nowY+10;
   var ids=kOrder.filter(function(id){return sc.sel.has(id);});
   var h='<div class="rm-head"><div class="rm-kick">Backward Roadmap &middot; '+esc(KSMETA[kActive].t)+'</div><div class="rm-vision">'+esc(st.vision||'')+'</div>';
   if(st.hhgs&&st.hhgs.length){ h+='<div class="rm-hhgs">'; st.hhgs.slice(0,3).forEach(function(x,i){ h+='<div class="rm-hhg"><b>High Hard Goal '+(i+1)+'</b>'+esc(typeof x==='string'?x:(x.goal||x.ziel||''))+'</div>'; }); h+='</div>'; }
-  h+='</div><div class="rm-grid"><div class="rm-colh rm-cl">Road / Markt</div><div class="rm-colh">bis '+y5+'</div><div class="rm-colh">bis '+y10+'</div><div class="rm-colh rm-vis">Vision '+visY+'</div>';
-  ids.forEach(function(id){ var s=sc.start[id]||1, j5=MKT[id].rampN[4], m=(st.markets&&st.markets[id])||{};
-    h+='<div class="rm-road rm-cl"><span class="rm-dot" style="background:'+kCol[id]+'"></span><div><div class="rm-mname">'+esc(islName(id))+'</div><div class="rm-vz">'+esc(m.vonZu||('von 0 zu '+fmtDE(j5,1)+' Mio'))+'</div><div class="rm-start">Start: Jahr '+s+'</div></div></div>';
-    var b5='',b10='',bv='', ms=(m.milestones&&m.milestones.length)?m.milestones:[{jahr:s,ziel:'Markteintritt'},{jahr:s+4,ziel:fmtDE(j5,1)+' Mio'}];
-    ms.forEach(function(x){ var off=(+x.jahr)||s, chip='<div class="rm-ms"><i>+'+off+(off===1?' Jahr':' Jahre')+'</i>'+esc(x.ziel||x.goal||'')+'</div>'; if(off<=5)b5+=chip; else if(off<=10)b10+=chip; else bv+=chip; });
-    h+='<div class="rm-cell">'+(b5||'<span class="rm-none">&middot;</span>')+'</div><div class="rm-cell">'+(b10||'<span class="rm-none">&middot;</span>')+'</div><div class="rm-cell rm-cellv"><div class="rm-ms rm-msv"><i>Ziel '+visY+'</i>'+fmtDE(j5,1)+' Mio Umsatzpotenzial</div>'+bv+'</div>';
+  h+='</div><div class="rm-grid"><div class="rm-colh rm-cl">Road / Markt</div><div class="rm-colh">Womit heute starten</div><div class="rm-colh rm-vis">High Hard Goals bis '+y31+'</div><div class="rm-colh rm-vis">High Hard Goals bis '+y36+'</div>';
+  ids.forEach(function(id){ var s=sc.start[id]||1, m=(st.markets&&st.markets[id])||{};
+    h+='<div class="rm-road rm-cl"><span class="rm-dot" style="background:'+kCol[id]+'"></span><div><div class="rm-mname">'+esc(islName(id))+'</div><div class="rm-vz">'+esc(m.vonZu||'')+'</div><div class="rm-start">Start: Jahr '+s+'</div></div></div>';
+    h+='<div class="rm-cell"><div class="rm-startcard">'+esc(m.startNow||'')+'</div></div>';
+    h+='<div class="rm-cell">'+goalCard(m.by2031)+'</div>';
+    h+='<div class="rm-cell">'+goalCard(m.by2036)+'</div>';
   });
   h+='</div>';
-  var starters=ids.filter(function(id){return (sc.start[id]||1)<=1;}).map(function(id){return islName(id);});
-  h+='<div class="rm-foot"><span class="rm-flbl">Womit jetzt starten</span><span>'+(starters.length?esc(starters.join('  \u00b7  ')):'Kein Sofortstart gewaehlt, alle Maerkte starten spaeter.')+'</span></div>';
   el.innerHTML=h;
 }
 function kApplyView(){
@@ -1342,11 +1367,11 @@ function kApplyView(){
 }
 function kAICall(){
   var prov=kAI.provider, key=kAI.key.trim(), model=kAI.model.trim(), sc=SC();
-  var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), w=eff(), visY=kVisionYear();
-  var markets=kOrder.map(function(id){return {id:id,name:islName(id),umsatzpotenzial_j5_mio:MKT[id].rampN[4],marktvolumen:MKT[id].vol,voting_score:Math.round(scoreOf(islById(id),w)*10)/10};});
+  var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), visY=kVisionYear(), nowY=new Date().getFullYear(), y31=nowY+5, y36=nowY+10;
+  var markets=kOrder.map(function(id){var i=islById(id),x=MKTX[id]||{}; return {id:id,name:islName(id),marktvolumen:MKT[id].vol,umsatzpotenzial_j5_mio:MKT[id].rampN[4],hochlauf_5j_mio:MKT[id].rampN,wettbewerb:compWord(i),naehe_zum_kern:proxWordShort(i),marktdynamik:growWord(i),strategischer_fit:x.fit||'',erste_schritte:x.startNow||'',moeglicher_aufbau:x.do2031||'',risiko:x.risk||''};});
   var gp=sc.g*100, gps=fmtDE(gp, gp%1===0?0:2), gtxt=sc.g>0?('Ergebnis-Puffer waechst '+gps+'% p.a.'):'Ergebnis-Puffer 25 Mio stabil';
-  var sys='Du bist Strategieberater fuer den Schulbuch- und Bildungsverlag Ernst Klett Verlag (EKV). Aufgabe: aus der Marktliste die optimale Teilmenge waehlen und je Markt ein Startjahr (1-5) festlegen, sodass der zusaetzliche jaehrliche Wachstumsbedarf am Kipp-Punkt gedeckt wird. Bevorzuge hohe Voting-Scores, eine realistische zeitliche Staffelung und moeglichst wenige Maerkte mit etwas Puffer. Liefere zusaetzlich eine Backward-Roadmap-Logik: ein Zielbild, maximal drei messbare High Hard Goals und je Markt eine Kernstrategie (von ... zu ...) plus Meilensteine. Antworte ausschliesslich mit JSON, kein Text davor oder danach, alle Texte auf Deutsch und knapp, keine Gedankenstriche.';
-  var usr='Szenario: '+KSMETA[kActive].t+' ('+gtxt+'). Vision-Jahr ca. '+visY+'. Bedarf am Kipp-Punkt (Jahr '+fmtDE(ref,1)+'): '+fmtDE(need,1)+' Mio EUR zusaetzlicher Jahresumsatz. Ein Markt erreicht sein Umsatzpotenzial (J5) ueber 5 Jahre ab seinem Startjahr und bleibt danach konstant. Maerkte (voting_score = Prioritaet aus dem Team-Voting): '+JSON.stringify(markets)+'. Antworte als JSON in genau dieser Form: {"vision":"ein Satz, Zielbild '+visY+' fuer EKV in diesem Szenario","hhgs":["maximal 3 messbare High Hard Goals fuer '+visY+'"],"why_not":"warum die uebrigen Maerkte nicht gewaehlt wurden, 1-2 Saetze","rationale":"kurze Gesamtbegruendung, unter 280 Zeichen","markets":[{"id":Zahl,"start":Zahl,"von_zu":"von ... zu ...","why":"warum dieser Markt, knapp","timing":"warum dieses Startjahr, knapp","milestones":[{"jahr":Zahl,"ziel":"messbares Ziel bei +Jahr Jahren"}]}]}.';
+  var sys='Du bist Strategieberater fuer den Schulbuchverlag Ernst Klett Verlag (EKV). EKV-Kontext: das schwer kopierbare Kern-Asset sind Inhalte ueber alle Faecher und Lehrplaene, dazu enge Beziehungen zu Schulen und Lehrkraeften; Nachfrage-Treiber sind wachsende Heterogenitaet der Schuelerschaft, Lehrkraeftemangel und Digitalisierung. Aufgabe: die beste Wachstumsstrategie zusammenstellen, die den zusaetzlichen Wachstumsbedarf am Kipp-Punkt schliesst. Waehle dynamisch so viele Maerkte wie noetig und je Markt ein Startjahr (1-5). Entscheide den Tradeoff zwischen Naehe zum Kern, Wettbewerb, Marktdynamik, Marktvolumen und Umsatzpotenzial selbst, so wie es fuer EKV strategisch am besten ist. Nutze ausdruecklich NICHT ein Team-Voting oder Popularitaet als Kriterium. Begruende jede Wahl konkret mit den Kennzahlen und dem Fit zum Kerngeschaeft, keine Floskeln wie grosses Marktvolumen und steigende Nachfrage. Empfehle je Markt konkret, was EKV tun, entwickeln oder bauen soll: heute, bis '+y31+' und bis '+y36+'. Antworte ausschliesslich mit JSON, alle Texte auf Deutsch, knapp und konkret, keine Gedankenstriche.';
+  var usr='Szenario: '+KSMETA[kActive].t+' ('+gtxt+'). Umsatz-Wachstum '+fmtDE(kU,1)+'% p.a., Kosten-Wachstum '+fmtDE(kK,1)+'% p.a. Vision-Jahr ca. '+visY+'. Zusaetzlicher Wachstumsbedarf am Kipp-Punkt (Jahr '+fmtDE(ref,1)+'): '+fmtDE(need,1)+' Mio EUR pro Jahr. Ein Markt erreicht sein Umsatzpotenzial (J5) ueber 5 Jahre ab Startjahr und bleibt danach konstant. Maerkte mit Kennzahlen und Analyse: '+JSON.stringify(markets)+'. Antworte als JSON in genau dieser Form: {"vision":"ein aspirativer Satz fuer '+visY+', kein Zahlenziel","hhgs":["maximal 3 messbare High Hard Goals fuer '+visY+'"],"why_not":"warum die uebrigen Maerkte nicht gewaehlt wurden, konkret mit Bezug auf Naehe, Wettbewerb, Dynamik oder Potenzial","rationale":"warum das die beste Strategie fuer EKV ist, unter 280 Zeichen","markets":[{"id":Zahl,"start":Zahl,"von_zu":"von ... zu ...","why":"konkrete Begruendung mit Kennzahlen und Fit zum Kern","start_now":"was EKV heute konkret tun soll","by_2031":{"do":"konkrete Massnahme, was entwickeln oder bauen","ziel":"messbares Ziel bis '+y31+'"},"by_2036":{"do":"konkrete Massnahme","ziel":"messbares Ziel bis '+y36+'"}}]}.';
   var url,headers,body;
   if(prov==='openai'){ url='https://api.openai.com/v1/chat/completions'; headers={'Content-Type':'application/json','Authorization':'Bearer '+key}; body={model:model,temperature:0.2,messages:[{role:'system',content:sys},{role:'user',content:usr}],response_format:{type:'json_object'}}; }
   else { url='https://api.anthropic.com/v1/messages'; headers={'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}; body={model:model,max_tokens:1024,system:sys,messages:[{role:'user',content:usr}]}; }
