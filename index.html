@@ -268,7 +268,9 @@ body.mode-raw .method{grid-template-columns:1fr}
 body.mode-korridor main>section:not(#sk){display:none}
 body.mode-korridor #sk{display:block;opacity:1;transform:none;animation:none}
 body.mode-korridor #navlinks{display:none}
-body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
+#navlinks-k{display:none}
+body.mode-korridor #navlinks-k{display:block}
+#kBedarf,#kMktH{scroll-margin-top:22px}
 .ksub{margin:46px 0 0;padding-top:30px;border-top:1px solid var(--hair)}
 .ksub h3{font-size:23px;font-weight:600;letter-spacing:-.02em;margin:0 0 8px}
 .ksub p{font-size:14px;line-height:1.6;color:var(--muted);max-width:760px;margin:0}
@@ -445,12 +447,6 @@ body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
         </div>
       </div>
     </div>
-    <div class="meta">
-      <span class="chip">Verfahren <b>Inselvoting</b></span>
-      <span class="chip">Stimmen <b id="m-n">10</b></span>
-      <span class="chip">Inseln <b>10</b></span>
-      <span class="chip">Stand <b>22.&ndash;26. Juni 2026</b></span>
-    </div>
   </div>
 </header>
 
@@ -469,13 +465,10 @@ body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
       <a href="#s7"><i>07</i>Einzelstimmen</a>
       <a href="#s8"><i>08</i>Methodik</a>
     </div>
-    <div id="navset">
-      <div class="navset-h">KI-Strategie (optional)</div>
-      <label class="navset-row">Anbieter<select id="kAIprov"><option value="anthropic">Claude (Anthropic)</option><option value="openai">ChatGPT (OpenAI)</option></select></label>
-      <label class="navset-row">API-Key<input id="kAIkey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false"></label>
-      <label class="navset-row">Modell<input id="kAImodel" type="text" value="claude-3-5-sonnet-20241022" spellcheck="false"></label>
-      <label class="navset-chk"><input type="checkbox" id="kAIremember"> Auf diesem Geraet merken</label>
-      <p class="navset-note">Wird nur aus deinem Browser direkt an den Anbieter gesendet und nirgends gespeichert. Mit Haken bleibt der Key in diesem Browser erhalten, nicht in der Datei. Ohne Key waehlt der eingebaute Optimierer.</p>
+    <div id="navlinks-k">
+      <a href="#sk"><i>K1</i>Wachstumskorridor</a>
+      <a href="#kBedarf"><i>K2</i>Bedarfsraum</a>
+      <a href="#kMktH"><i>K3</i>Marktauswahl</a>
     </div>
   </nav>
 </div>
@@ -714,7 +707,7 @@ body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
     </div>
     <div class="kstat" id="kKipp"></div>
 
-    <div class="ksubtabs" role="group" aria-label="Szenario">
+    <div class="ksubtabs" id="kBedarf" role="group" aria-label="Szenario">
       <button class="kst on" data-scen="stabil">Stabiles Wachstum</button>
       <button class="kst" data-scen="gesteigert">Gesteigertes Wachstum</button>
       <button class="kst" data-scen="moeglich">Moegliches Wachstum</button>
@@ -725,23 +718,15 @@ body.mode-korridor #navset{border-top:none;margin-top:0;padding-top:2px}
     <div class="kviewtog" role="group" aria-label="Darstellung">
       <button class="kvt on" data-v="verlauf">Verlauf</button>
       <button class="kvt" data-v="bubbles">Markt-Bubbles</button>
-      <button class="kvt" data-v="roadmap">Roadmap</button>
     </div>
 
     <div class="kcard" id="kChart2Card">
       <svg id="kChart2" viewBox="0 0 920 380" role="img" aria-label="Zusaetzlicher Wachstumsanteil"></svg>
       <div class="ktip" id="kTip2" hidden></div>
     </div>
-    <div id="kRoadmap" hidden></div>
     <div class="kstat" id="kCover"></div>
 
     <div class="kmkt-h" id="kMktH">Maerkte auswaehlen <span>aus der Rangliste, nach Umsatzpotenzial. Startjahr je Markt einstellbar.</span></div>
-    <div class="kbestrow">
-      <button class="kbest" id="kBest">&#9733;&nbsp; Beste Strategie mit aktuellen Maerkten</button>
-      <button class="kbest kbest2" id="kBestAdapt">&#10022;&nbsp; Stabile Strategie finden</button>
-      <span class="kbest-hint">Links: waehlt aus unseren Maerkten in voller Groesse und darf ueberschiessen. Rechts: die KI stellt aus unseren Maerkten den besten Mix zusammen und dosiert jedes Feld per Anteil, um im Bedarfsraum zu bleiben. Beide brauchen einen KI-Key (Menue oben rechts).</span>
-    </div>
-    <div class="kbest-note" id="kBestNote" hidden></div>
     <div class="kmarkets" id="kMarkets"></div>
   </section>
 </main>
@@ -1110,7 +1095,6 @@ document.querySelectorAll(".mt").forEach(function(b){
 })();
 
 /* init */
-document.getElementById("m-n").textContent=DATA.n;
 (function(){
   var sel=document.getElementById("ex-sel");
   if(sel){
@@ -1379,7 +1363,7 @@ function mergeStrat(base, ai){
   return base;
 }
 function renderExplain(){
-  var note=document.getElementById('kBestNote'), sc=SC(), v=kView();
+  var note=document.getElementById('kBestNote'); if(!note)return; var sc=SC(), v=kView();
   if(!v.ready){ note.hidden=true; note.innerHTML=''; return; }
   var h='';
   var lead=(v.src?('<b>'+esc(v.src)+'</b> '):'')+esc(v.rationale||'');
@@ -1409,11 +1393,7 @@ function renderRoadmap(){
   h+='</div>';
   el.innerHTML=h;
 }
-function kApplyView(){
-  var v=SC().view, card=document.getElementById('kChart2Card'), rm=document.getElementById('kRoadmap');
-  if(v==='roadmap'){ if(card)card.hidden=true; if(rm)rm.hidden=false; renderRoadmap(); }
-  else { if(rm)rm.hidden=true; if(card)card.hidden=false; renderChart2(); }
-}
+function kApplyView(){ var card=document.getElementById('kChart2Card'); if(card)card.hidden=false; renderChart2(); }
 function kAICall(){
   var prov=kAI.provider, key=kAI.key.trim(), model=kAI.model.trim(), sc=SC();
   var cr=kCross(), ref=(cr!==null&&cr<=KXMAX)?cr:KXMAX, need=kNeed(ref), visY=kVisionYear(), nowY=new Date().getFullYear(), y31=nowY+5, y36=nowY+10;
